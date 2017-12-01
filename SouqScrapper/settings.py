@@ -127,4 +127,4 @@ STATIC_URL = '/static/'
 # SHOPIFY
 API_KEY = '9ff17ed2058b5f0e0bceb81663d6f2a8'
 API_PASSWORD = 'f594faa989f974f342673d56acad4f8a'
-PRODUCT_URL = 'https://%s:%s@mystyl-co.myshopify.com//admin/products.json'
+PRODUCT_URL = 'https://{}:{}@mystyl-co.myshopify.com//admin/products.json'

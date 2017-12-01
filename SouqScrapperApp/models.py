@@ -28,6 +28,12 @@ class Product(models.Model):
     brand = models.CharField(max_length=120)
     tags = models.TextField()
 
+    def __str__(self):
+        return self.title
+
+    def __unicode__(self):
+        return self.title
+
     class Meta:
         managed = MANAGED
         db_table = 'products'

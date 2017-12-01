@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 
+from SouqScrapperApp.ShopifyAPI import ShopifyIntegration
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -461,7 +463,11 @@ class SouqUAEScrapper():
         for item in items:
             product = self.retrieveProductDetails(url=item['url'], commonTags=commonTags, collection=collection,
                                                   subCollection=subCollection)
-            self.saveProduct(product=product)
+            saved  = self.saveProduct(product=product)
+            if saved:
+                # Integration
+                shopifyIntegrationInstance = ShopifyIntegration()
+                shopifyIntegrationInstance.addNewProduct(productDict=product)
 
     def retrieveProductImageBySize(self, soup):
         attr = []
@@ -542,7 +548,7 @@ class SouqUAEScrapper():
             tags.append(product['collection'])
 
             product['tags'] = tags + commonTags
-            print product
+            # print product
             return product
 
     def saveProduct(self, product):
@@ -586,52 +592,54 @@ class SouqUAEScrapper():
             record.brand = str(product['brand'])
             record.tags = ','.join(product['tags'])
             record.save()
+            return record
         except Exception as e:
             print str(e)
+            return None
 
 
-    def sendProductToAPI(self, product):
-        endPoint = settings.PRODUCT_URL
-        endPoint = endPoint.format(settings.API_KEY,settings.API_PASSWORD)
-
-        # data
-        data = {
-            "product": {
-                "title": product['title'],
-                "body_html": product['description'],
-                "vendor": "Souq",
-                "product_type": "Snowboard",
-                "images": [
-                    {
-                        "src": "http:\/\/example.com\/rails_logo.gif"
-                    }
-                ],
-                "metafields": [
-                    {
-                        "key": "url",
-                        "value": product['url'],
-                        "value_type": "string",
-                        "namespace": "global"
-                    }
-                ],
-                "tags": ','.join(product['tags']),
-                "variants": [
-                    {
-                        "compare_at_price": null,
-
-                        "option1": "Pink",
-                        "position": 1,
-                        "price": 199.99,
-
-
-                    }
-                ]
-
-            }
-        }
-
-        r = requests.post(url = endPoint, data = data)
-        return r.text
+    # def sendProductToAPI(self, product):
+    #     endPoint = settings.PRODUCT_URL
+    #     endPoint = endPoint.format(settings.API_KEY,settings.API_PASSWORD)
+    #
+    #     # data
+    #     data = {
+    #         "product": {
+    #             "title": product['title'],
+    #             "body_html": product['description'],
+    #             "vendor": "Souq",
+    #             "product_type": "Snowboard",
+    #             "images": [
+    #                 {
+    #                     "src": "http:\/\/example.com\/rails_logo.gif"
+    #                 }
+    #             ],
+    #             "metafields": [
+    #                 {
+    #                     "key": "url",
+    #                     "value": product['url'],
+    #                     "value_type": "string",
+    #                     "namespace": "global"
+    #                 }
+    #             ],
+    #             "tags": ','.join(product['tags']),
+    #             "variants": [
+    #                 {
+    #                     "compare_at_price": null,
+    #
+    #                     "option1": "Pink",
+    #                     "position": 1,
+    #                     "price": 199.99,
+    #
+    #
+    #                 }
+    #             ]
+    #
+    #         }
+    #     }
+    #
+    #     r = requests.post(url = endPoint, data = data)
+    #     return r.text
 #
 # SouqUAEScrapper().startScrappingProcessing(
 #     'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/round-neck/a-t-6356-6274-6503/s/', False,
