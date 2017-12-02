@@ -17,16 +17,17 @@ class Product(models.Model):
     discount_amount = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
     color = models.CharField(max_length=100)
-    image_1 = models.URLField(null=True,blank=True)
-    image_2 = models.URLField(null=True,blank=True)
-    image_3 = models.URLField(null=True,blank=True)
-    image_4 = models.URLField(null=True,blank=True)
-    image_5 = models.URLField(null=True,blank=True)
+    image_1 = models.URLField(null=True, blank=True)
+    image_2 = models.URLField(null=True, blank=True)
+    image_3 = models.URLField(null=True, blank=True)
+    image_4 = models.URLField(null=True, blank=True)
+    image_5 = models.URLField(null=True, blank=True)
     variant_colors = models.CharField(max_length=250)
     variant_size = models.CharField(max_length=1024)
     affiliate_code = models.CharField(max_length=120)
     brand = models.CharField(max_length=120)
     tags = models.TextField()
+    shopify_id = models.CharField(db_index=True, max_length=1024)
 
     def __str__(self):
         return self.title

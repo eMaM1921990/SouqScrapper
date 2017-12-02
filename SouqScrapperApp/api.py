@@ -16,10 +16,11 @@ def fetchScrapper(request):
     try:
         scapper = SouqUAEScrapper()
         scapper.startScrappingProcessing(
-            'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/round-neck/a-t-6356-6274-6503/s/', False,
+            'https://fashion.souq.com/ae-en/search?campaign_id=3797?q=eyJzIjoiYmVzdCIsImYiOnsiaWRfdHlwZV9pdGVtIjpbIjQ5MCJdLCJzZ2VuX2dlbmRlcl9lbiI6WyJtZW4iXSwic2dlbl93YXRjaF90eXBlX2VuIjpbImNhc3VhbCB3YXRjaCJdfX0%3D', True,
             'Men`s T-Shirts', 'Round Neck')
         resp['status'] = True
     except Exception as e:
+        print str(e)
         resp['desc'] = str(e)
 
     return Response(resp)

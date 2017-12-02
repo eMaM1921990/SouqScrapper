@@ -419,7 +419,22 @@ class SouqUAEScrapper():
             if not isFashion:
                 self.scrapSearchPageResults(page=scrappedPage, url=url, collection=collection,
                                             subCollection=subCollection)
+            else:
+                self.scrapSearchPageResultFashion(page=scrappedPage, url=url, collection=collection,
+                                                  subCollection=subCollection)
+
         print 'Exit startScrappingProcessing'
+
+    # Scrap Fashion page result
+    def scrapSearchPageResultFashion(self, page, url, collection, subCollection):
+        jsonData = json.loads(str(page))
+        totalPage = jsonData['metadata']['total_pages']
+        self.parseProductsList(jsonData['data'], None, collection, subCollection)
+        for page in range(2, totalPage, 1):
+            # url += self.list_all_item_attribute
+            scrappedPage = self.open_http_connection(call_url=url, page=page)
+            jsonData = json.loads(scrappedPage)
+            self.parseProductsList(jsonData['data'], None, collection, subCollection)
 
     # Scrap search page result
     def scrapSearchPageResults(self, page, url, collection, subCollection):
@@ -449,7 +464,7 @@ class SouqUAEScrapper():
             if liTag.name == 'li':
                 tags.append(str(liTag.find('a')['data-name']))
         if len(tags) > 0:
-            del tags[len(tags)-1]
+            del tags[len(tags) - 1]
         return tags
 
     def retrieveSearchAsJson(self, page):
@@ -463,7 +478,7 @@ class SouqUAEScrapper():
         for item in items:
             product = self.retrieveProductDetails(url=item['url'], commonTags=commonTags, collection=collection,
                                                   subCollection=subCollection)
-            saved  = self.saveProduct(product=product)
+            saved = self.saveProduct(product=product)
             if saved:
                 # Integration
                 shopifyIntegrationInstance = ShopifyIntegration()
@@ -497,6 +512,7 @@ class SouqUAEScrapper():
 
     def formatPrice(self, value):
         value = value.replace(self.currency, "")
+        value = value.replace(",",'')
         return value.replace(' ', '')
 
     def retrieveProductDetails(self, url, commonTags, collection, subCollection):
@@ -541,7 +557,8 @@ class SouqUAEScrapper():
             # Get Product tags
             tags.append(getPriceTags(price=compareAtPrice))
             # Get Color Tags
-            tags.append(getColorTags(tag=product['color']))
+            if product['color']:
+                tags.append(getColorTags(tag=product['color']))
             # Get Brand Tags
             tags.append(product['brand'])
             # Get Collection tags
@@ -596,51 +613,3 @@ class SouqUAEScrapper():
         except Exception as e:
             print str(e)
             return None
-
-
-    # def sendProductToAPI(self, product):
-    #     endPoint = settings.PRODUCT_URL
-    #     endPoint = endPoint.format(settings.API_KEY,settings.API_PASSWORD)
-    #
-    #     # data
-    #     data = {
-    #         "product": {
-    #             "title": product['title'],
-    #             "body_html": product['description'],
-    #             "vendor": "Souq",
-    #             "product_type": "Snowboard",
-    #             "images": [
-    #                 {
-    #                     "src": "http:\/\/example.com\/rails_logo.gif"
-    #                 }
-    #             ],
-    #             "metafields": [
-    #                 {
-    #                     "key": "url",
-    #                     "value": product['url'],
-    #                     "value_type": "string",
-    #                     "namespace": "global"
-    #                 }
-    #             ],
-    #             "tags": ','.join(product['tags']),
-    #             "variants": [
-    #                 {
-    #                     "compare_at_price": null,
-    #
-    #                     "option1": "Pink",
-    #                     "position": 1,
-    #                     "price": 199.99,
-    #
-    #
-    #                 }
-    #             ]
-    #
-    #         }
-    #     }
-    #
-    #     r = requests.post(url = endPoint, data = data)
-    #     return r.text
-#
-# SouqUAEScrapper().startScrappingProcessing(
-#     'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/round-neck/a-t-6356-6274-6503/s/', False,
-#     'Men`s T-Shirts', 'Round Neck')
