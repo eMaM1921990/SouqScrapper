@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from SouqScrapperApp.ShopifyAPI import ShopifyIntegration
 
 reload(sys)
@@ -482,7 +484,12 @@ class SouqUAEScrapper():
             if saved:
                 # Integration
                 shopifyIntegrationInstance = ShopifyIntegration()
-                shopifyIntegrationInstance.addNewProduct(productDict=product)
+                if saved.shopify_id:
+                    shopifyJson = shopifyIntegrationInstance.upateShopiyProduct(productDict=product,id=saved.shopify_id)
+                else:
+                    shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product)
+                # update product
+                shopifyIntegrationInstance.updateProduct(product=saved,shopifyJson=shopifyJson)
 
     def retrieveProductImageBySize(self, soup):
         attr = []
@@ -506,9 +513,22 @@ class SouqUAEScrapper():
         body = soup.find('script', attrs={'type': 'application/ld+json'}).text
         resultData = json.loads(body)
         product['description'] = str(resultData['description'].encode('utf-8').strip())
-        product['color'] = str(resultData['color'])
+        if resultData['color']:
+            product['color'] = str(resultData['color'])
         product['brand'] = str(resultData['brand']['name']).translate(
             string.maketrans("\n\t\r ", "    ")).replace(' ', '')
+
+
+    def retrieveFashionVariant(self, soup, product):
+        productVariant = soup.find('div',attrs={'id':'productTrackingParams'})
+        variants = productVariant['data-variant']
+        variantDict = {}
+        for variant in str(variants).split(','):
+            keys = variant.spilt(":")
+            variantDict[keys[0]]= keys[1]
+
+        return variantDict
+
 
     def formatPrice(self, value):
         value = value.replace(self.currency, "")
@@ -550,8 +570,11 @@ class SouqUAEScrapper():
             product['url'] = str(url)
             product['images'] = self.retrieveProductImageBySize(soup)
             product['variants'] = {}
-            product['variants']['size'] = sizes_arr
-            product['variants']['colors'] = product['color']
+            if 'color' in product:
+                product['variants']['size'] = sizes_arr
+                product['variants']['colors'] = product['color']
+            else:
+                product['variants'] = self.retrieveFashionVariant(soup,product)
 
             tags = []
             # Get Product tags
@@ -570,7 +593,11 @@ class SouqUAEScrapper():
 
     def saveProduct(self, product):
         try:
-            record = Product()
+            try:
+                record = Product.objects.filter(title=product['title'])
+            except ObjectDoesNotExist as e:
+                record = Product()
+
             record.title = product['title']
             record.sub_collection = product['subCollection']
             record.collection = product['collection']
@@ -604,8 +631,8 @@ class SouqUAEScrapper():
                 record.image_5 = product['images'][5]
             except Exception as e:
                 record.image_5 = None
-            record.variant_colors = product['color']
-            record.variant_size = ','.join(product['variants']['size'])
+            record.variant_option_one = product['color']
+            record.variant_option_two = ','.join(product['variants']['size'])
             record.brand = str(product['brand'])
             record.tags = ','.join(product['tags'])
             record.save()
