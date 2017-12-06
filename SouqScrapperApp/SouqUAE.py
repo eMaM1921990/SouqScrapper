@@ -407,8 +407,7 @@ class SouqUAEScrapper():
             time.sleep(10)
             scraped_html_page = requests.get(call_url, timeout=self.time_out,
                                              params=dict(page=page))
-
-            print 'parsing url end' + call_url
+            print 'parsing url end ' + call_url
             # Check response code
             if scraped_html_page.status_code == 200:
                 return scraped_html_page.text
@@ -428,16 +427,16 @@ class SouqUAEScrapper():
         scrappedPage = self.open_http_connection(call_url=url, page=1)
         if scrappedPage:
             if not isFashion:
-                self.scrapSearchPageResults(page=scrappedPage, url=url, collection=collection,
-                                            subCollection=subCollection)
+                self.scrapSouqResults(page=scrappedPage, url=url, collection=collection,
+                                      subCollection=subCollection)
             else:
-                self.scrapSearchPageResultFashion(page=scrappedPage, url=url, collection=collection,
-                                                  subCollection=subCollection)
+                self.scrapFashionResults(page=scrappedPage, url=url, collection=collection,
+                                         subCollection=subCollection)
 
         print 'Exit startScrappingProcessing'
 
     # Scrap Fashion page result
-    def scrapSearchPageResultFashion(self, page, url, collection, subCollection):
+    def scrapFashionResults(self, page, url, collection, subCollection):
         jsonData = json.loads(str(page))
         totalPage = jsonData['metadata']['total_pages']
         self.parseProductsList(jsonData['data'], None, collection, subCollection)
@@ -448,11 +447,11 @@ class SouqUAEScrapper():
             self.parseProductsList(jsonData['data'], None, collection, subCollection)
 
     # Scrap search page result
-    def scrapSearchPageResults(self, page, url, collection, subCollection):
+    def scrapSouqResults(self, page, url, collection, subCollection):
         resultData = self.retrieveSearchAsJson(page=page)
         commonTags = self.retrieveURLTags(page=page)
         # Calc total Page result
-        totalPage = self.calcTotalPage(resultData['numberOfItems'])
+        totalPage = self.retrieveTotalPages(resultData['numberOfItems'])
         self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection)
 
         for page in range(2, totalPage, 1):
@@ -461,7 +460,7 @@ class SouqUAEScrapper():
             resultData = self.retrieveSearchAsJson(page=scrappedPage)
             self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection)
 
-    def calcTotalPage(self, numberOfItems):
+    def retrieveTotalPages(self, numberOfItems):
         result = float(numberOfItems) / self.item_per_page
         if not result.is_integer():
             result = int(result) + 1
@@ -500,6 +499,7 @@ class SouqUAEScrapper():
                     shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product)
                     # update product
                     shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
+
 
     def retrieveProductImageBySize(self, soup):
         attr = []
