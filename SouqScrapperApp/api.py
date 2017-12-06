@@ -16,7 +16,7 @@ def fetchScrapper(request):
     try:
 
         scapper = SouqUAEScrapper()
-        urlDict = scapper.urls_dict[0]
+        urlDict = SouqHelper().urls_dict[0]
         scapper.startScrappingProcessing(
             urlDict[scapper.url_key], urlDict[scapper.isFashion_key],
             urlDict[scapper.collection_key], urlDict[scapper.sub_collection_key])
