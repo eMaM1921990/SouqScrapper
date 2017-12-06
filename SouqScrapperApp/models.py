@@ -27,7 +27,7 @@ class Product(models.Model):
     affiliate_code = models.CharField(max_length=120)
     brand = models.CharField(max_length=120)
     tags = models.TextField()
-    shopify_id = models.CharField(db_index=True, max_length=1024)
+    shopify_id = models.CharField( max_length=1024,default=None, null=True)
 
     def __str__(self):
         return self.title

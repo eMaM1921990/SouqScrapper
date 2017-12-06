@@ -14,13 +14,14 @@ def fetchScrapper(request):
     resp['status'] = False
 
     try:
+
         scapper = SouqUAEScrapper()
+        urlDict = scapper.urls_dict[0]
         scapper.startScrappingProcessing(
-            'https://fashion.souq.com/ae-en/search?campaign_id=3797?q=eyJzIjoiYmVzdCIsImYiOnsiaWRfdHlwZV9pdGVtIjpbIjQ5MCJdLCJzZ2VuX2dlbmRlcl9lbiI6WyJtZW4iXSwic2dlbl93YXRjaF90eXBlX2VuIjpbImNhc3VhbCB3YXRjaCJdfX0%3D', True,
-            'Men`s T-Shirts', 'Round Neck')
+            urlDict[scapper.url_key], urlDict[scapper.isFashion_key],
+            urlDict[scapper.collection_key], urlDict[scapper.sub_collection_key])
         resp['status'] = True
     except Exception as e:
-        print str(e)
         resp['desc'] = str(e)
 
     return Response(resp)

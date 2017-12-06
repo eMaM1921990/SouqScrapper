@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
+import stringcase
 from django.core.exceptions import ObjectDoesNotExist
 
 from SouqScrapperApp.ShopifyAPI import ShopifyIntegration
@@ -33,124 +34,132 @@ class SouqUAEScrapper():
         self.sub_collection_key = 'sub_collection'
         self.isFashion_key = 'isFashion'
         self.url_key = 'url'
+        self.tags_key = 'tags'
         self.urls_dict = [
-            {self.collection_key: 'Men`s T-Shirts', self.sub_collection_key: 'Round Neck', self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/round-neck/a-t-6356-6274-6503/s/'},
-            {self.collection_key: 'Men`s T-Shirts', self.sub_collection_key: 'V Neck', self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/l/v-neck/a-t-6356-6274-6315-6503/s/'},
-            {self.collection_key: 'Men`s T-Shirts', self.sub_collection_key: 'Shirt Neck', self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/l/shirt-neck/a-t-6356-6274-6315-6503/s/'},
-            {self.collection_key: 'Men`s Vests', self.sub_collection_key: None, self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/tank-tops/men/tank-tops/a-6356-6274/s/'},
-            {self.collection_key: 'Men`s Shorts', self.sub_collection_key: 'Bermuda Shorts', self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/shorts/shorts-482%7Csportswear-467/men/bermuda-short/a-t-6356-6335/s/'},
-            {self.collection_key: 'Men`s Shorts', self.sub_collection_key: 'Drawstring Shorts',
+            {self.collection_key: "Men's T-Shirts", self.sub_collection_key: 'Round Neck', self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/round-neck/a-t-6356-6274-6503/s/',
+             self.tags_key: "Men's, Men's Clothing "},
+            {self.collection_key: "Men's T-Shirts", self.sub_collection_key: 'V Neck', self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/l/v-neck/a-t-6356-6274-6315-6503/s/',
+             self.tags_key: "Men's, Men's Clothing "},
+            {self.collection_key: "Men's T-Shirts", self.sub_collection_key: 'Shirt Neck', self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/l/shirt-neck/a-t-6356-6274-6315-6503/s/',
+             self.tags_key: "Men's, Men's Clothing "},
+            {self.collection_key: "Men's Vests", self.sub_collection_key: None, self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/tank-tops/men/tank-tops/a-6356-6274/s/',
+             self.tags_key: "Men's, Men's Clothing "},
+            {self.collection_key: "Men's Shorts", self.sub_collection_key: 'Bermuda Shorts', self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/shorts/shorts-482%7Csportswear-467/men/bermuda-short/a-t-6356-6335/s/',
+             self.tags_key: "Men's, Men's Clothing "},
+            {self.collection_key: "Men's Shorts", self.sub_collection_key: 'Drawstring Shorts',
              self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/shorts/shorts-482%7Csportswear-467/men/drawstring-short/a-t-6356-6335/s/'},
-            {self.collection_key: 'Men`s Shorts', self.sub_collection_key: 'Cargo Shorts', self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/shorts/shorts-482%7Csportswear-467/men/cargo-short/a-t-6356-6335/s/'},
-            {self.collection_key: 'Men`s Jeans', self.sub_collection_key: 'Slim Fit', self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/shorts/shorts-482%7Csportswear-467/men/drawstring-short/a-t-6356-6335/s/',
+             self.tags_key: "Men's, Men's Clothing "},
+            {self.collection_key: "Men's Shorts", self.sub_collection_key: 'Cargo Shorts', self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/shorts/shorts-482%7Csportswear-467/men/cargo-short/a-t-6356-6335/s/',
+             self.tags_key: "Men's, Men's Clothing "},
+            {self.collection_key: "Men's Jeans", self.sub_collection_key: 'Slim Fit', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/slim-fit/a-t-6356  6314/s/'},
-            {self.collection_key: 'Men`s Jeans', self.sub_collection_key: 'Straight', self.isFashion_key: False,
+            {self.collection_key: "Men's Jeans", self.sub_collection_key: 'Straight', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/straight/a-t-6356-6314/s/'},
-            {self.collection_key: 'Men`s Jeans', self.sub_collection_key: 'Skinny', self.isFashion_key: False,
+            {self.collection_key: "Men's Jeans", self.sub_collection_key: 'Skinny', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/skinny/a-t-6356-6314/s/'},
-            {self.collection_key: 'Men`s Jeans', self.sub_collection_key: 'Ripped', self.isFashion_key: False,
+            {self.collection_key: "Men's Jeans", self.sub_collection_key: 'Ripped', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/ripped/a-t-6356-6314/s/'},
-            {self.collection_key: 'Men`s Coats, Jackets & Hoodies', self.sub_collection_key: 'Zip Up Hoodie',
+            {self.collection_key: "Men's Coats, Jackets & Hoodies", self.sub_collection_key: 'Zip Up Hoodie',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jackets/jackets---and---coats-473/men/zip-up-hoodie/a-t-6356-6309/s/'},
-            {self.collection_key: 'Men`s Coats, Jackets & Hoodies', self.sub_collection_key: 'Puffer Jacket',
+            {self.collection_key: "Men's Coats, Jackets & Hoodies", self.sub_collection_key: 'Puffer Jacket',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jackets/jackets---and---coats-473/men/puffer-jacket/a-t-6356-6309/s/'},
-            {self.collection_key: 'Men`s Coats, Jackets & Hoodies', self.sub_collection_key: 'Bomber Jacket',
+            {self.collection_key: "Men's Coats, Jackets & Hoodies", self.sub_collection_key: 'Bomber Jacket',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jackets/jackets---and---coats-473/men/bomber-jacket/a-t-6356-6309/s/'},
-            {self.collection_key: 'Men`s Shirts', self.sub_collection_key: 'Full Sleeve', self.isFashion_key: False,
+            {self.collection_key: "Men's Shirts", self.sub_collection_key: 'Full Sleeve', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/shirts/full-sleeve/a-t-6356-6274-6490/s/'},
-            {self.collection_key: 'Men`s Shirts', self.sub_collection_key: 'Short Sleeve', self.isFashion_key: False,
+            {self.collection_key: "Men's Shirts", self.sub_collection_key: 'Short Sleeve', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/shirts/short-sleeve/a-t-6356-6274-6490/s/'},
-            {self.collection_key: 'Men`s Suits', self.sub_collection_key: 'Tuxedo', self.isFashion_key: False,
+            {self.collection_key: "Men's Suits", self.sub_collection_key: 'Tuxedo', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/suits/suits-486/men/tuxedo/a-t-6356-6332/s/'},
-            {self.collection_key: 'Men`s Suits', self.sub_collection_key: 'Business Suit', self.isFashion_key: False,
+            {self.collection_key: "Men's Suits", self.sub_collection_key: 'Business Suit', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/suits/suits-486/men/business-suit/a-t-6356-6332/s/'},
-            {self.collection_key: 'Men`s Underwear', self.sub_collection_key: 'Boxers', self.isFashion_key: False,
+            {self.collection_key: "Men's Underwear", self.sub_collection_key: 'Boxers', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/underwear/underwear-489/men/boxers/a-t-6356-6337/s/'},
-            {self.collection_key: 'Men`s Underwear', self.sub_collection_key: 'Briefs', self.isFashion_key: False,
+            {self.collection_key: "Men's Underwear", self.sub_collection_key: 'Briefs', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/underwear/underwear-489/men/briefs/a-t-6356-6337/s/'},
-            {self.collection_key: 'Men`s Sportswear', self.sub_collection_key: 'Sports Tops', self.isFashion_key: False,
+            {self.collection_key: "Men's Sportswear", self.sub_collection_key: 'Sports Tops', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-tops/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Sportswear', self.sub_collection_key: 'Sports Shorts',
+            {self.collection_key: "Men's Sportswear", self.sub_collection_key: 'Sports Shorts',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-shorts/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Sportswear', self.sub_collection_key: 'Sports Pants',
+            {self.collection_key: "Men's Sportswear", self.sub_collection_key: 'Sports Pants',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-pants/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Sportswear', self.sub_collection_key: 'Sports Jackets',
+            {self.collection_key: "Men's Sportswear", self.sub_collection_key: 'Sports Jackets',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-jackets/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Sportswear', self.sub_collection_key: 'Sports Vests',
+            {self.collection_key: "Men's Sportswear", self.sub_collection_key: 'Sports Vests',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-vests/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Swimwear', self.sub_collection_key: 'Swim Shorts', self.isFashion_key: False,
+            {self.collection_key: "Men's Swimwear", self.sub_collection_key: 'Swim Shorts', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/swimwear/swimwear-487/men/swim-shorts/a-t-6356-6435/s/'},
-            {self.collection_key: 'Men`s Swimwear', self.sub_collection_key: 'Swim Trunks', self.isFashion_key: False,
+            {self.collection_key: "Men's Swimwear", self.sub_collection_key: 'Swim Trunks', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/swimwear/swimwear-487/men/swim-trunk/a-t-6356-6435/s/'},
-            {self.collection_key: 'Men`s Belts', self.sub_collection_key: None, self.isFashion_key: False,
+            {self.collection_key: "Men's Belts", self.sub_collection_key: None, self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-belt/belts-557%7Caccessories-466/a-t/s/'},
-            {self.collection_key: 'Men`s Cufflinks', self.sub_collection_key: None, self.isFashion_key: False,
+            {self.collection_key: "Men's Cufflinks", self.sub_collection_key: None, self.isFashion_key: False,
              self.url_key: "https://uae.souq.com/ae-en/cufflinks/men%60s-jewelry-292%7Caccessories-466/cufflinks/a-t-6313/s/"},
-            {self.collection_key: 'Men`s Hats', self.sub_collection_key: None, self.isFashion_key: False,
+            {self.collection_key: "Men's Hats", self.sub_collection_key: None, self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-cap-or-hat/hats---and---caps-566/men/baseball---and---snapback-hat/a-t-6356-6573/s/'},
-            {self.collection_key: 'Men`s Wallets', self.sub_collection_key: 'Bifold Wallets', self.isFashion_key: False,
+            {self.collection_key: "Men's Wallets", self.sub_collection_key: 'Bifold Wallets', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/bifold-wallets/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Wallets', self.sub_collection_key: 'Card & Id Cases',
+            {self.collection_key: "Men's Wallets", self.sub_collection_key: 'Card & Id Cases',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/card---and---id-cases/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Wallets', self.sub_collection_key: 'Trifold Wallets',
+            {self.collection_key: "Men's Wallets", self.sub_collection_key: 'Trifold Wallets',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/trifold-wallets/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Wallets', self.sub_collection_key: 'Zip Around Wallets',
+            {self.collection_key: "Men's Wallets", self.sub_collection_key: 'Zip Around Wallets',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/zip-around-wallets/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Wallets', self.sub_collection_key: 'Flap Wallets', self.isFashion_key: False,
+            {self.collection_key: "Men's Wallets", self.sub_collection_key: 'Flap Wallets', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/flap-wallets/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Wallets', self.sub_collection_key: 'Clip Wallet', self.isFashion_key: False,
+            {self.collection_key: "Men's Wallets", self.sub_collection_key: 'Clip Wallet', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/clip-wallet/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Wallets', self.sub_collection_key: 'Travel & Document Holders',
+            {self.collection_key: "Men's Wallets", self.sub_collection_key: 'Travel & Document Holders',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/travel---and---document-holders/a-t-6356-5700/s/'},
-            {self.collection_key: 'Men`s Watches', self.sub_collection_key: 'Casual Watch', self.isFashion_key: True,
+            {self.collection_key: "Men's Watches", self.sub_collection_key: 'Casual Watch', self.isFashion_key: True,
              self.url_key: 'https://fashion.souq.com/ae-en/search?campaign_id=3797?q=eyJzIjoiYmVzdCIsImYiOnsiaWRfdHlwZV9pdGVtIjpbIjQ5MCJdLCJzZ2VuX2dlbmRlcl9lbiI6WyJtZW4iXSwic2dlbl93YXRjaF90eXBlX2VuIjpbImNhc3VhbCB3YXRjaCJdfX0%3D'},
-            {self.collection_key: 'Men`s Watches', self.sub_collection_key: 'Dress Watch', self.isFashion_key: True,
+            {self.collection_key: "Men's Watches", self.sub_collection_key: 'Dress Watch', self.isFashion_key: True,
              self.url_key: 'https://fashion.souq.com/ae-en/search?campaign_id=3797?q=eyJzIjoiYmVzdCIsImYiOnsiaWRfdHlwZV9pdGVtIjpbIjQ5MCJdLCJzZ2VuX2dlbmRlcl9lbiI6WyJtZW4iXSwic2dlbl93YXRjaF90eXBlX2VuIjpbImRyZXNzIHdhdGNoIl19fQ%3D%3D'},
-            {self.collection_key: 'Men`s Watches', self.sub_collection_key: 'Sport Watch', self.isFashion_key: True,
+            {self.collection_key: "Men's Watches", self.sub_collection_key: 'Sport Watch', self.isFashion_key: True,
              self.url_key: 'https://fashion.souq.com/ae-en/search?campaign_id=3797?q=eyJzIjoiYmVzdCIsImYiOnsiaWRfdHlwZV9pdGVtIjpbIjQ5MCJdLCJzZ2VuX2dlbmRlcl9lbiI6WyJtZW4iXSwic2dlbl93YXRjaF90eXBlX2VuIjpbInNwb3J0IHdhdGNoIl19fQ%3D%3D'},
-            {self.collection_key: 'Men`s Ties', self.sub_collection_key: 'Neck Tie', self.isFashion_key: False,
+            {self.collection_key: "Men's Ties", self.sub_collection_key: 'Neck Tie', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/ties/accessories-466/men/neck-ties/a-t-6356-6334/s/'},
-            {self.collection_key: 'Men`s Ties', self.sub_collection_key: 'Bow Tie', self.isFashion_key: False,
+            {self.collection_key: "Men's Ties", self.sub_collection_key: 'Bow Tie', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/ties/accessories-466/men/bow-ties/a-t-6356-6334/s/'},
-            {self.collection_key: 'Men`s Rings, Necklaces & Bracelets', self.sub_collection_key: 'Rings',
+            {self.collection_key: "Men's Rings, Necklaces & Bracelets", self.sub_collection_key: 'Rings',
              self.isFashion_key: False, self.url_key: 'https://uae.souq.com/ae-en/men/rings-284/men/a-t-1780/s/'},
-            {self.collection_key: 'Men`s Rings, Necklaces & Bracelets', self.sub_collection_key: 'Necklaces',
+            {self.collection_key: "Men's Rings, Necklaces & Bracelets", self.sub_collection_key: 'Necklaces',
              self.isFashion_key: False, self.url_key: 'https://uae.souq.com/ae-en/men/men/necklaces-285/a-1780 t/s/'},
-            {self.collection_key: 'Men`s Sunglasses', self.sub_collection_key: 'Square', self.isFashion_key: False,
+            {self.collection_key: "Men's Sunglasses", self.sub_collection_key: 'Square', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/eyewear/eyewear-433/men/sunglasses/square/a-t-6356-6265-6572/s/'},
-            {self.collection_key: 'Men`s Sunglasses', self.sub_collection_key: 'Aviator', self.isFashion_key: False,
+            {self.collection_key: "Men's Sunglasses", self.sub_collection_key: 'Aviator', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/eyewear/eyewear-433/men/sunglasses/aviator/a-t-6356-6265-6572/s/'},
-            {self.collection_key: 'Men`s Sunglasses', self.sub_collection_key: 'Rectangle', self.isFashion_key: False,
+            {self.collection_key: "Men's Sunglasses", self.sub_collection_key: 'Rectangle', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/eyewear/eyewear-433/men/sunglasses/rectangle/a-t-6356-6265-6572/s/'},
-            {self.collection_key: 'Men`s Sunglasses', self.sub_collection_key: 'Oval', self.isFashion_key: False,
+            {self.collection_key: "Men's Sunglasses", self.sub_collection_key: 'Oval', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/eyewear/eyewear-433/men/sunglasses/oval/a-t-6356-6265-6572/s/'},
-            {self.collection_key: 'Men`s Sunglasses', self.sub_collection_key: 'Wayfarer', self.isFashion_key: False,
+            {self.collection_key: "Men's Sunglasses", self.sub_collection_key: 'Wayfarer', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/eyewear/eyewear-433/men/sunglasses/wayfarer/a-t-6356-6265-6572/s/'},
-            {self.collection_key: 'Men`s Sunglasses', self.sub_collection_key: 'Wrap Around', self.isFashion_key: False,
+            {self.collection_key: "Men's Sunglasses", self.sub_collection_key: 'Wrap Around', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/eyewear/eyewear-433/men/sunglasses/wrap-around/a-t-6356-6265-6572/s/'},
-            {self.collection_key: 'Men`s Sunglasses', self.sub_collection_key: 'Round', self.isFashion_key: False,
+            {self.collection_key: "Men's Sunglasses", self.sub_collection_key: 'Round', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/eyewear/eyewear-433/men/sunglasses/round/a-t-6356-6265-6572/s/'},
-            {self.collection_key: 'Men`s Sunglasses', self.sub_collection_key: 'Rimless', self.isFashion_key: False,
+            {self.collection_key: "Men's Sunglasses", self.sub_collection_key: 'Rimless', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/eyewear/eyewear-433/men/sunglasses/rimless/a-t-6356-6265-6572/s/'},
-            {self.collection_key: 'Men`s Sunglasses', self.sub_collection_key: 'Half Frame', self.isFashion_key: False,
+            {self.collection_key: "Men's Sunglasses", self.sub_collection_key: 'Half Frame', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/eyewear/eyewear-433/men/sunglasses/half-frame/a-t-6356-6265-6572/s/'},
             {self.collection_key: 'Men`s Flip-Flops', self.sub_collection_key: None, self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/flip-flops/men/a-6356/s/'},
@@ -485,11 +494,12 @@ class SouqUAEScrapper():
                 # Integration
                 shopifyIntegrationInstance = ShopifyIntegration()
                 if saved.shopify_id:
-                    shopifyJson = shopifyIntegrationInstance.upateShopiyProduct(productDict=product,id=saved.shopify_id)
+                    shopifyJson = shopifyIntegrationInstance.upateShopiyProduct(productDict=product,
+                                                                                id=saved.shopify_id)
                 else:
                     shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product)
-                # update product
-                shopifyIntegrationInstance.updateProduct(product=saved,shopifyJson=shopifyJson)
+                    # update product
+                    shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
 
     def retrieveProductImageBySize(self, soup):
         attr = []
@@ -512,28 +522,60 @@ class SouqUAEScrapper():
     def retrieveProductDescColor(self, soup, product):
         body = soup.find('script', attrs={'type': 'application/ld+json'}).text
         resultData = json.loads(body)
-        product['description'] = str(resultData['description'].encode('utf-8').strip())
+        product['description'] = self.retrieveDescription(soup,resultData)
         if resultData['color']:
             product['color'] = str(resultData['color'])
-        product['brand'] = str(resultData['brand']['name']).translate(
+
+        brand = str(resultData['brand']['name']).translate(
             string.maketrans("\n\t\r ", "    ")).replace(' ', '')
 
+        product['brand'] = stringcase.sentencecase(brand)
+
+    def retrieveDescription(self, soup, productJson):
+        desc = soup.find('div', attrs={'id': 'description-full'}).text
+        if not desc:
+            desc = soup.find('div', attrs={'id': 'description-short'}).text
+
+            if not desc:
+                desc = str(productJson['description'].encode('utf-8').strip())
+        return desc
 
     def retrieveFashionVariant(self, soup, product):
-        productVariant = soup.find('div',attrs={'id':'productTrackingParams'})
+        productVariant = soup.find('div', attrs={'id': 'productTrackingParams'})
         variants = productVariant['data-variant']
         variantDict = {}
         for variant in str(variants).split(','):
             keys = variant.spilt(":")
-            variantDict[keys[0]]= keys[1]
+            variantDict[keys[0]] = keys[1]
 
         return variantDict
 
+    def getSizeQuantity(self, url, parsed_page):
+        if url:
+            page = self.open_http_connection(call_url=url, page=None)
+            parsed_page = self.parsePageSoap(page=page)
+        return self.extractSizeAvailbleQuantity(parsed_page)
+
+    def extractSizeAvailbleQuantity(self, page):
+        body = page.find_all('script', attrs={'type': 'text/javascript'})[5].text
+        body = body.replace('var globalBucket =', '')
+        body = str(body).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
+        resultData = json.loads(body)
+        return resultData['Page_Data']['product']['quantity']
 
     def formatPrice(self, value):
         value = value.replace(self.currency, "")
-        value = value.replace(",",'')
-        return value.replace(' ', '')
+        value = value.replace(",", '')
+        value = value.replace(' ', '')
+        value = float(value) * 0.272294
+        value = '%.1f' % round(value, 1)
+        return value
+
+    def getTagsFronsizes(self, sizeDict):
+        sizeArr = []
+        for size in sizeDict:
+            sizeArr.append(size['name'])
+        return sizeArr
 
     def retrieveProductDetails(self, url, commonTags, collection, subCollection):
         product_page_result = self.open_http_connection(call_url=url, page=None)
@@ -554,8 +596,15 @@ class SouqUAEScrapper():
             price = float(compareAtPrice) + float(discountAmount)
             sizes = soup.find_all(attrs={'class': "item-connection"})
             sizes_arr = []
-            for size in sizes:
-                sizes_arr.append(str(size.text).translate(string.maketrans("\n\t\r ", "    ")))
+            for index, size in enumerate(sizes):
+                dictSize = {}
+                dictSize['name'] = str(size.text).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
+                if index == 0:
+                    dictSize['quantity'] = self.getSizeQuantity(url=None, parsed_page=soup)
+                else:
+                    hrefTag = size.find('a')
+                    dictSize['quantity'] = self.getSizeQuantity(url=str(hrefTag['data-url']), parsed_page=soup)
+                sizes_arr.append(dictSize)
 
             # Get product color and description
             self.retrieveProductDescColor(soup=soup, product=product)
@@ -574,7 +623,7 @@ class SouqUAEScrapper():
                 product['variants']['size'] = sizes_arr
                 product['variants']['colors'] = product['color']
             else:
-                product['variants'] = self.retrieveFashionVariant(soup,product)
+                product['variants'] = self.retrieveFashionVariant(soup, product)
 
             tags = []
             # Get Product tags
@@ -587,15 +636,16 @@ class SouqUAEScrapper():
             # Get Collection tags
             tags.append(product['collection'])
 
-            product['tags'] = tags + commonTags
+            product['tags'] = tags + commonTags + self.getTagsFronsizes(sizes_arr)
             # print product
             return product
 
     def saveProduct(self, product):
         try:
             try:
-                record = Product.objects.filter(title=product['title'])
+                record = Product.objects.get(title=product['title'])
             except ObjectDoesNotExist as e:
+                print str(e)
                 record = Product()
 
             record.title = product['title']
@@ -632,7 +682,11 @@ class SouqUAEScrapper():
             except Exception as e:
                 record.image_5 = None
             record.variant_option_one = product['color']
-            record.variant_option_two = ','.join(product['variants']['size'])
+            size_option = []
+            for size in product['variants']['size']:
+                size_option.append(size['name'])
+
+            record.variant_option_two = ','.join(size_option)
             record.brand = str(product['brand'])
             record.tags = ','.join(product['tags'])
             record.save()

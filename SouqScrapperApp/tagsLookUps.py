@@ -4,6 +4,8 @@ __author__ = 'eMaM'
 def getColorTags(tag):
     if tag == 'Multi Color':
         return 'Multi-Coloured'
+    if tag == 'Optic White':
+        return 'White'
     return tag
 
 

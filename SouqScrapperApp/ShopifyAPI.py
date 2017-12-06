@@ -10,14 +10,14 @@ __author__ = 'eMaM'
 class ShopifyIntegration():
     def __init__(self):
         self.end_point = settings.PRODUCT_URL.format(settings.API_KEY, settings.API_PASSWORD)
-        self.end_point_update = settings.PRODUCT_UPDATE_URL.format(settings.API_KEY, settings.API_PASSWORD)
+        # self.end_point_update = settings.PRODUCT_UPDATE_URL.format(settings.API_KEY, settings.API_PASSWORD)
 
     def addNewProduct(self, productDict):
 
         # Image
         imageArr = []
         for image in productDict['images']:
-            dict = {"src": image.replace('item_XS', 'item_L')}
+            dict = {"src": image.replace('item_XS', 'item_XXL')}
             imageArr.append(dict)
 
         # Variants
@@ -27,7 +27,9 @@ class ShopifyIntegration():
                 "compare_at_price": productDict['price'],
                 "price": productDict['compareAtPrice'],
                 "option1": productDict['color'],
-                "option2": size
+                "option2": size['name'],
+                "inventory_quantity": size['quantity'],
+                "inventory_management":"shopify"
             }
             variants.append(dict)
 
@@ -68,11 +70,12 @@ class ShopifyIntegration():
         }
 
         r = requests.post(url=self.end_point, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+        # update variant Image
+        self.updateProductVarirant(r.text)
         return r.text
 
-
-    def upateShopiyProduct(self, productDict,id):
-
+    def upateShopiyProduct(self, productDict, id):
+        end_point_update = settings.PRODUCT_UPDATE_URL.format(settings.API_KEY, settings.API_PASSWORD, id)
         # Image
         imageArr = []
         for image in productDict['images']:
@@ -93,6 +96,7 @@ class ShopifyIntegration():
         # data
         data = {
             "product": {
+                "id": id,
                 "title": productDict['title'],
                 "body_html": productDict['description'],
                 "vendor": productDict['brand'],
@@ -126,14 +130,28 @@ class ShopifyIntegration():
             }
         }
 
-        r = requests.post(url=self.end_point.format(id), data=json.dumps(data), headers={'Content-Type': 'application/json'})
+        r = requests.put(url=end_point_update, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+        # if json.loads(r.text.)
         return r.text
 
-
-    def updateProduct(self, product , shopifyJson):
+    def updateProduct(self, product, shopifyJson):
         try:
-            object=Product.objects.get(id=product.id)
-            object.shopify_id=shopifyJson['product']['id']
+            object = Product.objects.get(id=product.id)
+            object.shopify_id = json.loads(str(shopifyJson))['product']['id']
             object.save()
         except Exception as e:
             print str(e)
+
+    def updateProductVarirant(self, shopifyJson):
+        image_id = json.loads(str(shopifyJson))['product']['images'][0]['id']
+        variants = json.loads(str(shopifyJson))['product']['variants']
+        for variant in variants:
+            end_point_update = settings.PRODUCT_VARIANT_URL.format(settings.API_KEY, settings.API_PASSWORD,
+                                                                   variant['id'])
+            data = {
+                "variant": {
+                    "id": variant['id'],
+                    "image_id": image_id
+                }
+            }
+            r = requests.put(url=end_point_update, data=json.dumps(data), headers={'Content-Type': 'application/json'})
