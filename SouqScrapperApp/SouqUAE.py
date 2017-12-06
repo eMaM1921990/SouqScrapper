@@ -500,7 +500,6 @@ class SouqUAEScrapper():
                     # update product
                     shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
 
-
     def retrieveProductImageBySize(self, soup):
         attr = []
         images = soup.find_all(attrs={'class': 'slide'})
@@ -522,7 +521,7 @@ class SouqUAEScrapper():
     def retrieveProductDescColor(self, soup, product):
         body = soup.find('script', attrs={'type': 'application/ld+json'}).text
         resultData = json.loads(body)
-        product['description'] = self.retrieveDescription(soup,resultData)
+        product['description'] = self.retrieveDescription(soup, resultData)
         if resultData['color']:
             product['color'] = str(resultData['color'])
 
@@ -532,10 +531,13 @@ class SouqUAEScrapper():
         product['brand'] = stringcase.sentencecase(brand)
 
     def retrieveDescription(self, soup, productJson):
-        desc = soup.find('div', attrs={'id': 'description-full'}).text
+        desc = soup.find('div', attrs={'id': 'description-full'})
+        if desc:
+            desc = desc.text
         if not desc:
             desc = soup.find('div', attrs={'id': 'description-short'}).text
-
+            if desc:
+                desc = desc.text
             if not desc:
                 desc = str(productJson['description'].encode('utf-8').strip())
         return desc
