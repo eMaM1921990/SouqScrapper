@@ -493,12 +493,11 @@ class SouqUAEScrapper():
                 # Integration
                 shopifyIntegrationInstance = ShopifyIntegration()
                 if saved.shopify_id:
-                    shopifyJson = shopifyIntegrationInstance.upateShopiyProduct(productDict=product,
-                                                                                id=saved.shopify_id)
-                else:
-                    shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product)
-                    # update product
-                    shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
+                    shopifyIntegrationInstance.removeShopifyProduct(id=saved.shopify_id)
+
+                shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product)
+                # update product
+                shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
 
     def retrieveProductImageBySize(self, soup):
         attr = []

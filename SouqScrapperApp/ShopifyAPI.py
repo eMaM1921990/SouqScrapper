@@ -74,63 +74,9 @@ class ShopifyIntegration():
         self.updateProductVarirant(r.text)
         return r.text
 
-    def upateShopiyProduct(self, productDict, id):
+    def removeShopifyProduct(self,  id):
         end_point_update = settings.PRODUCT_UPDATE_URL.format(settings.API_KEY, settings.API_PASSWORD, id)
-        # Image
-        imageArr = []
-        for image in productDict['images']:
-            dict = {"src": image.replace('item_XS', 'item_L')}
-            imageArr.append(dict)
-
-        # Variants
-        variants = []
-        for size in productDict['variants']['size']:
-            dict = {
-                "compare_at_price": productDict['price'],
-                "price": productDict['compareAtPrice'],
-                "option1": productDict['color'],
-                "option2": size
-            }
-            variants.append(dict)
-
-        # data
-        data = {
-            "product": {
-                "id": id,
-                "title": productDict['title'],
-                "body_html": productDict['description'],
-                "vendor": productDict['brand'],
-                "product_type": productDict['collection'],
-                "images": imageArr,
-                "metafields": [
-                    {
-                        "key": "url",
-                        "value": productDict['url'],
-                        "value_type": "string",
-                        "namespace": "global"
-                    }
-                ],
-                "tags": ','.join(productDict['tags']),
-                "variants": variants,
-                "options": [
-                    {
-                        "name": "Color",
-                        "position": 1,
-                        "values": [
-                            productDict['color']
-                        ]
-                    },
-                    {
-                        "name": "Size",
-                        "position": 2,
-                        "values": productDict['variants']['size']
-                    }
-                ]
-
-            }
-        }
-
-        r = requests.put(url=end_point_update, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+        r = requests.delete(url=end_point_update,  headers={'Content-Type': 'application/json'})
         # if json.loads(r.text.)
         return r.text
 
