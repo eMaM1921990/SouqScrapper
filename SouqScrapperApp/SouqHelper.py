@@ -226,14 +226,36 @@ class SouqHelper():
             {self.collection_key: 'Men`s Briefcases & Work Bags', self.sub_collection_key: None,
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/briefcase/men/briefcases/a-6356-6328/s/'},
-            {self.collection_key: 'Women`s Tops', self.sub_collection_key: 'Blouses', self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/blouses/a-t-6356-6274/s/'},
-            {self.collection_key: 'Women`s Tops', self.sub_collection_key: 'T-Shirts', self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/t--shirts/a-t-6356-6274/s/'},
-            {self.collection_key: 'Women`s Tops', self.sub_collection_key: 'Shirts', self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/shirts/a-t-6356-6274/s/'},
-            {self.collection_key: 'Women`s Tops', self.sub_collection_key: 'Crop Tops', self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/crop-tops/a-t-6356-6274/s/'},
+
+            {self.collection_key: 'Women`s Tops',
+             self.sub_collection_key: 'Blouses',
+             self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/blouses/a-t-6356-6274/s/',
+             self.tags_key:"Middle East, Souq.com, Women's, Women's Clothing, Women's Tops, Blouses"
+             },
+
+            {self.collection_key: 'Women`s Tops',
+             self.sub_collection_key: 'T-Shirts',
+             self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/t--shirts/a-t-6356-6274/s/',
+             self.tags_key:"Middle East, Souq.com, Women's, Women's Clothing, Women's Tops, T-Shirts"
+
+             },
+
+            {self.collection_key: 'Women`s Tops',
+             self.sub_collection_key: 'Shirts',
+             self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/shirts/a-t-6356-6274/s/',
+             self.tags_key:"Middle East, Souq.com, Women's, Women's Clothing, Women's Tops, Shirts"
+             },
+
+            {self.collection_key: 'Women`s Tops',
+             self.sub_collection_key: 'Crop Tops',
+             self.isFashion_key: False,
+             self.url_key: 'https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/crop-tops/a-t-6356-6274/s/',
+             self.tags_key:"Middle East, Souq.com, Women's, Women's Clothing, Women's Tops, Crop Tops"
+
+             },
             {self.collection_key: 'Women`s Tops', self.sub_collection_key: 'Pull Over Tops', self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/pullover-tops/a-t-6356-6274/s/'},
             {self.collection_key: 'Women`s Tops', self.sub_collection_key: 'Long Line Tops', self.isFashion_key: False,
