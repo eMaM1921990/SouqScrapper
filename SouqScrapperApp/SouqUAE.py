@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
 
+import bs4
 import stringcase
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -52,17 +53,17 @@ class SouqUAEScrapper():
         return soup
 
     # Start Scrap
-    def startScrappingProcessing(self, url, isFashion, collection, subCollection):
+    def startScrappingProcessing(self, url, isFashion, collection, subCollection, tags):
         print 'Enter startScrappingProcessing'
         url += self.list_all_item_attribute
         scrappedPage = self.open_http_connection(call_url=url, page=1)
         if scrappedPage:
             if not isFashion:
                 self.scrapSouqResults(page=scrappedPage, url=url, collection=collection,
-                                      subCollection=subCollection)
+                                      subCollection=subCollection, tags=tags)
             else:
                 self.scrapFashionResults(page=scrappedPage, url=url, collection=collection,
-                                         subCollection=subCollection)
+                                         subCollection=subCollection, tags=tags)
 
         print 'Exit startScrappingProcessing'
 
@@ -78,18 +79,19 @@ class SouqUAEScrapper():
             self.parseProductsList(jsonData['data'], None, collection, subCollection)
 
     # Scrap search page result
-    def scrapSouqResults(self, page, url, collection, subCollection):
+    def scrapSouqResults(self, page, url, collection, subCollection, tags):
         resultData = self.retrieveSearchAsJson(page=page)
         commonTags = self.retrieveURLTags(page=page)
         # Calc total Page result
         totalPage = self.retrieveTotalPages(resultData['numberOfItems'])
-        self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection)
+        print 'find {} for the current'.format(totalPage)
+        self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection, tags)
 
         for page in range(2, totalPage, 1):
             # url += self.list_all_item_attribute
             scrappedPage = self.open_http_connection(call_url=url, page=page)
             resultData = self.retrieveSearchAsJson(page=scrappedPage)
-            self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection)
+            self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection, tags)
 
     def retrieveTotalPages(self, numberOfItems):
         result = float(numberOfItems) / self.item_per_page
@@ -115,10 +117,11 @@ class SouqUAEScrapper():
 
         return resultData
 
-    def parseProductsList(self, items, commonTags, collection, subCollection):
+    def parseProductsList(self, items, commonTags, collection, subCollection, tags):
         for item in items:
+            print 'scrap product {} '.format(str(item))
             product = self.retrieveProductDetails(url=item['url'], commonTags=commonTags, collection=collection,
-                                                  subCollection=subCollection)
+                                                  subCollection=subCollection, otherTags=tags)
             saved = self.saveProduct(product=product)
             if saved:
                 # Integration
@@ -140,7 +143,7 @@ class SouqUAEScrapper():
 
         return attr
 
-    def retrieveProductColorsBySize(self, soup):
+    def retrieveProductColors(self, soup):
         attrArry = []
         colors = soup.find(attrs={'class': 'colors-block'}).contents
         for index, color in enumerate(colors):
@@ -148,7 +151,7 @@ class SouqUAEScrapper():
                 attrArry.append(str(color['data-value']))
         return attrArry
 
-    def retrieveProductDescColor(self, soup, product):
+    def retrieveProductDescAndColor(self, soup, product):
         body = soup.find('script', attrs={'type': 'application/ld+json'}).text
         resultData = json.loads(body)
         product['description'] = self.retrieveDescription(soup, resultData)
@@ -156,21 +159,33 @@ class SouqUAEScrapper():
             product['color'] = str(resultData['color'])
 
         brand = str(resultData['brand']['name']).translate(
-            string.maketrans("\n\t\r ", "    ")).replace(' ', '')
+            string.maketrans("\n\t\r ", "    "))
 
-        product['brand'] = stringcase.sentencecase(brand)
+        product['brand'] = brand
 
     def retrieveDescription(self, soup, productJson):
-        desc = soup.find('div', attrs={'id': 'description-full'})
-        if desc:
-            desc = desc.text
-        if not desc:
-            desc = soup.find('div', attrs={'id': 'description-short'}).text
-            if desc:
-                desc = desc.text
-            if not desc:
-                desc = str(productJson['description'].encode('utf-8').strip())
-        return desc
+
+        descriptionFullTag = soup.find('div', attrs={'id': 'description-full'})
+        descriptionShortTag = soup.find('div', attrs={'id': 'description-short'})
+        defaultDesc = str(productJson['description'].encode('utf-8').strip())
+
+        if descriptionFullTag:
+            desc = ''
+            descriptionFullTagList = descriptionFullTag.contents
+            for tag in descriptionFullTagList:
+                if type(tag) is not bs4.element.NavigableString:
+                    desc += str(tag)
+            return desc
+
+        elif descriptionShortTag:
+            desc = ''
+            descriptionShortTagList = descriptionShortTag.contents
+            for tag in descriptionShortTagList:
+                if type(tag) is not bs4.element.NavigableString:
+                    desc += str(tag)
+            return desc
+
+        return defaultDesc
 
     def retrieveFashionVariant(self, soup, product):
         productVariant = soup.find('div', attrs={'id': 'productTrackingParams'})
@@ -199,8 +214,8 @@ class SouqUAEScrapper():
         value = value.replace(self.currency, "")
         value = value.replace(",", '')
         value = value.replace(' ', '')
-        value = float(value) * 0.272294
-        value = '%.1f' % round(value, 1)
+        value = float(value) * 0.272245
+        # value = '%.1f' % round(value, 1)
         return value
 
     def getTagsFronsizes(self, sizeDict):
@@ -209,7 +224,7 @@ class SouqUAEScrapper():
             sizeArr.append(size['name'])
         return sizeArr
 
-    def retrieveProductDetails(self, url, commonTags, collection, subCollection):
+    def retrieveProductDetails(self, url, commonTags, collection, subCollection, otherTags):
         product_page_result = self.open_http_connection(call_url=url, page=None)
 
         if product_page_result:
@@ -239,7 +254,7 @@ class SouqUAEScrapper():
                 sizes_arr.append(dictSize)
 
             # Get product color and description
-            self.retrieveProductDescColor(soup=soup, product=product)
+            self.retrieveProductDescAndColor(soup=soup, product=product)
 
             product['title'] = title
             product['discountAmount'] = discountAmount
@@ -258,6 +273,11 @@ class SouqUAEScrapper():
                 product['variants'] = self.retrieveFashionVariant(soup, product)
 
             tags = []
+
+            # add other tags
+            if otherTags:
+                tags.append(otherTags)
+
             # Get Product tags
             tags.append(getPriceTags(price=compareAtPrice))
             # Get Color Tags
