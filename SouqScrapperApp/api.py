@@ -10,19 +10,19 @@ __author__ = 'eMaM'
 
 @never_cache
 @api_view(['GET'])
-def fetchScrapper(request):
+def fetchScrapper(request, froms , tos):
     resp = {}
     resp['status'] = False
     scapper = SouqUAEScrapper()
     souqHelper = SouqHelper()
-    urlDict = souqHelper.urls_dict[0]
-
-    scapper.startScrappingProcessing(
-        url=urlDict[souqHelper.url_key],
-        isFashion=urlDict[souqHelper.isFashion_key],
-        collection=urlDict[souqHelper.collection_key],
-        subCollection=urlDict[souqHelper.sub_collection_key],
-        tags=urlDict[souqHelper.tags_key])
+    for index in range(froms,tos,1):
+        urlDict = souqHelper.urls_dict[index]
+        scapper.startScrappingProcessing(
+            url=urlDict[souqHelper.url_key],
+            isFashion=urlDict[souqHelper.isFashion_key],
+            collection=urlDict[souqHelper.collection_key],
+            subCollection=urlDict[souqHelper.sub_collection_key],
+            tags=urlDict[souqHelper.tags_key])
     resp['status'] = True
     resp['desc'] = str(e)
     return Response(resp)

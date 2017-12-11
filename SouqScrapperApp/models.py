@@ -28,6 +28,7 @@ class Product(models.Model):
     brand = models.CharField(max_length=120)
     tags = models.TextField()
     shopify_id = models.CharField( max_length=1024,default=None, null=True)
+    other_specs = models.TextField()
 
     def __str__(self):
         return self.title
