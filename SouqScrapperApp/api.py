@@ -15,7 +15,7 @@ def fetchScrapper(request, froms , tos):
     resp['status'] = False
     scapper = SouqUAEScrapper()
     souqHelper = SouqHelper()
-    for index in range(froms,tos,1):
+    for index in range(int(froms),int(tos),1):
         urlDict = souqHelper.urls_dict[index]
         scapper.startScrappingProcessing(
             url=urlDict[souqHelper.url_key],
