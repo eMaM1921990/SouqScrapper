@@ -276,7 +276,7 @@ class SouqUAEScrapper():
 
         product['title'] = title
         product['discountAmount'] = discountAmount
-        product['compareAtPrice'] = compareAtPrice
+        product['compareAtPrice'] = compareAtPrice if discountAmount > 0  else 0
         product['price'] = price
 
         product['collection'] = collection if collection else ''
@@ -335,7 +335,7 @@ class SouqUAEScrapper():
 
         product['title'] = title
         product['discountAmount'] = discountAmount
-        product['compareAtPrice'] = compareAtPrice
+        product['compareAtPrice'] = compareAtPrice if discountAmount > 0  else 0
         product['price'] = price
 
         product['collection'] = collection if collection else ''
@@ -374,12 +374,9 @@ class SouqUAEScrapper():
 
     def saveProduct(self, product, isFashion):
         try:
-            try:
-                record = Product.objects.get(title=product['title'])
-            except ObjectDoesNotExist as e:
-                print str(e)
-                record = Product()
-
+            record = Product()
+            if Product.objects.filter(title=product['title']).exists():
+                record = Product.objects.filter(title=product['title'])[0]
             record.title = product['title']
             record.sub_collection = product['subCollection']
             record.collection = product['collection']
@@ -429,13 +426,12 @@ class SouqUAEScrapper():
 
                 record.variant_option_two = ','.join(size_option)
             else:
-                record.variant_option_one = product['variants']['BandColor']
+                record.variant_option_two = product['variants']['BandColor']
 
             record.brand = str(product['brand'])
             record.tags = ','.join(product['tags'])
-            record.other_specs = product['specs']
+            record.other_specs = str(product['specs'])
             record.save()
             return record
         except Exception as e:
-            print str(e)
             return None

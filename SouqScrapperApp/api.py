@@ -24,5 +24,4 @@ def fetchScrapper(request, froms , tos):
             subCollection=urlDict[souqHelper.sub_collection_key],
             tags=urlDict[souqHelper.tags_key])
     resp['status'] = True
-    resp['desc'] = str(e)
     return Response(resp)
