@@ -269,7 +269,7 @@ class SouqUAEScrapper():
         compareAtPrice = float(price) + float(discountAmount)
         product['discountAmount'] = discountAmount
         product['compareAtPrice'] = compareAtPrice if discountAmount > 0  else None
-        product['price'] = pageData['product']['price']
+        product['price'] = price
 
         # Get product color and description
         self.retrieveProductDescAndColor(soup=soup, product=product)
