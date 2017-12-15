@@ -23,8 +23,8 @@ class ShopifyIntegration():
         variants = []
         for size in productDict['variants']['size']:
             dict = {
-                "compare_at_price": productDict['price'],
-                "price": productDict['compareAtPrice'],
+                "compare_at_price": productDict['compareAtPrice'],
+                "price": productDict['price'],
                 "option1": productDict['color'],
                 "option2": size['name'],
                 "inventory_quantity": size['quantity'],
