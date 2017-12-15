@@ -164,7 +164,7 @@ class SouqUAEScrapper():
             string.maketrans("\n\t\r ", "    "))
 
         product['brand'] = brand
-        product['title'] = str(resultData['name']).translate(string.maketrans("\n\t\r\f ", "     ")).replace(' ', '')
+        # product['title'] = str(resultData['name']).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
 
     def retrieveDescription(self, soup, productJson):
 
@@ -253,7 +253,8 @@ class SouqUAEScrapper():
         # Retrieve Page Data
         pageData = self.retrievePageData(page=soup)
 
-
+        productTitleTag = soup.find(attrs={'class': 'product-title'})
+        product['title'] = str(productTitleTag.find('h1').text)
 
         product['collection'] = collection if collection else ''
         product['subCollection'] = subCollection if subCollection else ''
