@@ -61,7 +61,7 @@ class SouqHelper():
             {self.collection_key: "Men's Jeans",
              self.sub_collection_key: 'Slim Fit',
              self.isFashion_key: False,
-             self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/slim-fit/a-t-6356  6314/s/',
+             self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/slim-fit/a-t-6356-6314/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Jeans, Slim Fit "},
 
 

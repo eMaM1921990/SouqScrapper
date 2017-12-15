@@ -73,6 +73,7 @@ class SouqUAEScrapper():
         totalPage = jsonData['metadata']['total_pages']
         self.parseProductsList(jsonData['data'], None, collection, subCollection, tags, isFashion=True)
         for page in range(2, totalPage, 1):
+            print 'page '+str(page)
             # url += self.list_all_item_attribute
             scrappedPage = self.open_http_connection(call_url=url, page=page)
             jsonData = json.loads(scrappedPage)
@@ -88,6 +89,7 @@ class SouqUAEScrapper():
         self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection, tags)
 
         for page in range(2, totalPage, 1):
+            print 'page '+str(page)
             # url += self.list_all_item_attribute
             scrappedPage = self.open_http_connection(call_url=url, page=page)
             resultData = self.retrieveSearchAsJson(page=scrappedPage)
