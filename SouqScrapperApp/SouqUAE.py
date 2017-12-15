@@ -76,7 +76,7 @@ class SouqUAEScrapper():
             print 'page ' + str(page)
             # url += self.list_all_item_attribute
             scrappedPage = self.open_http_connection(call_url=url, page=page)
-            jsonData = json.loads(scrappedPage)
+            jsonData = json.loads(str(scrappedPage))
             self.parseProductsList(jsonData['data'], None, collection, subCollection, tags, isFashion=True)
 
     # Scrap search page result
@@ -92,7 +92,7 @@ class SouqUAEScrapper():
             print 'page ' + str(page)
             # url += self.list_all_item_attribute
             scrappedPage = self.open_http_connection(call_url=url, page=page)
-            resultData = self.retrieveSearchAsJson(page=scrappedPage)
+            resultData = self.retrieveSearchAsJson(page=str(scrappedPage))
             self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection, tags)
 
     def retrieveTotalPages(self, numberOfItems):
@@ -251,6 +251,8 @@ class SouqUAEScrapper():
         product = {}
         soup = self.parsePageSoap(page=product_page_result)
         # Retrieve Page Data
+
+
         pageData = self.retrievePageData(page=soup)
 
         productTitleTag = soup.find(attrs={'class': 'product-title'})
