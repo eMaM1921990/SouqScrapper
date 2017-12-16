@@ -444,4 +444,5 @@ class SouqUAEScrapper():
             record.save()
             return record
         except Exception as e:
+            print 'Error during save proudct {}  cause {} '.format(product['title'],str(e))
             return None
