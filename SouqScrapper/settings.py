@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'SouqScrapperApp',
     'rest_framework',
     'import_export',
+    'django_celery_results',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -78,14 +79,19 @@ WSGI_APPLICATION = 'SouqScrapper.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 DATABASES = {
+    # 'default': {
+    #         'ENGINE': 'django.db.backends.mysql',
+    #         'NAME': 'scrapper',
+    #         'USER': 'root',
+    #         'PASSWORD': 'souq_admin',
+    #         'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+    #         'PORT': '3306',
+    #     }
+
     'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'scrapper',
-            'USER': 'root',
-            'PASSWORD': 'souq_admin',
-            'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-            'PORT': '3306',
-        }
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
 }
 
 
@@ -177,3 +183,8 @@ API_PASSWORD = 'f594faa989f974f342673d56acad4f8a'
 PRODUCT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products.json'
 PRODUCT_UPDATE_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products/{}.json'
 PRODUCT_VARIANT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/variants/{}.json'
+
+
+
+# CELERY
+CELERY_RESULT_BACKEND = 'django-db'

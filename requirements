@@ -5,3 +5,5 @@ djangorestframework
 django-import-export
 stringcase
 mysqlclient
+celery
+django-celery-results
