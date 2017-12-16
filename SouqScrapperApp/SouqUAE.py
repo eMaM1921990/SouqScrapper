@@ -121,10 +121,11 @@ class SouqUAEScrapper():
 
     def parseProductsList(self, items, commonTags, collection, subCollection, tags, isFashion=False):
         for item in items:
-            print 'scrap product {} '.format(str(item))
+            print 'scrap product {} '.format(str(item['name']))
             product = self.retrieveProductDetails(url=item['url'], commonTags=commonTags, collection=collection,
                                                   subCollection=subCollection, otherTags=tags, isFashion=isFashion)
             saved = self.saveProduct(product=product, isFashion=isFashion)
+            print 'product scrapped {}   statues {}'.format(item['name'],saved)
             if saved:
                 # Integration
                 shopifyIntegrationInstance = ShopifyIntegration()
