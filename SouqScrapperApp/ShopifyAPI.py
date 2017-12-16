@@ -134,7 +134,7 @@ class ShopifyIntegration():
             data = self.getShopifyFashionProduct(productDict=productDict)
 
         r = requests.post(url=self.end_point, data=json.dumps(data), headers={'Content-Type': 'application/json'})
-        print r.text
+        print productDict['title'] + 'saved to shopfiy'
         # update variant Image
         self.updateProductVarirant(r.text)
         return r.text
