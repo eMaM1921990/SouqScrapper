@@ -1006,3 +1006,6 @@ class SouqHelper():
              self.url_key: 'https://uae.souq.com/ae-en/suitcases/trolley-suitcases---and---bags-475/Women/luggage-trolley-bags/a-t-6356-5700/s/',
              self.tags_key:"UAE,Qatar,Oman, Bahrain, Kuwait, Souq.com, Women's, Women's Bags, Women's Luggage & Suitcases"},
         ]
+
+
+
