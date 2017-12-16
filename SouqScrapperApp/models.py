@@ -12,7 +12,7 @@ class Product(models.Model):
     sub_collection = models.CharField(max_length=250)
     collection = models.CharField(max_length=250)
     description = models.TextField()
-    compare_at_Price = models.CharField(max_length=100)
+    compare_at_Price = models.CharField(max_length=100,null=True)
     price = models.CharField(max_length=100)
     discount_amount = models.CharField(max_length=100)
     title = models.CharField(max_length=100)
