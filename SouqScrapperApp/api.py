@@ -10,12 +10,12 @@ __author__ = 'eMaM'
 
 @never_cache
 @api_view(['GET'])
-def fetchScrapper(request, froms , tos):
+def fetchScrapper(request, froms, tos):
     resp = {}
     resp['status'] = False
     scapper = SouqUAEScrapper()
     souqHelper = SouqHelper()
-    for index in range(int(froms),int(tos),1):
+    for index in range(int(froms), int(tos), 1):
         urlDict = souqHelper.urls_dict[index]
         scapper.startScrappingProcessing(
             url=urlDict[souqHelper.url_key],
@@ -25,3 +25,19 @@ def fetchScrapper(request, froms , tos):
             tags=urlDict[souqHelper.tags_key])
     resp['status'] = True
     return Response(resp)
+
+
+def scrapSOUQ():
+    scapper = SouqUAEScrapper()
+    souqHelper = SouqHelper()
+    for dict in souqHelper.urls_dict:
+        urlDict = dict
+        scapper.startScrappingProcessing(
+            url=urlDict[souqHelper.url_key],
+            isFashion=urlDict[souqHelper.isFashion_key],
+            collection=urlDict[souqHelper.collection_key],
+            subCollection=urlDict[souqHelper.sub_collection_key],
+            tags=urlDict[souqHelper.tags_key])
+
+
+scrapSOUQ()

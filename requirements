@@ -4,6 +4,6 @@ Django==1.9.8
 djangorestframework
 django-import-export
 stringcase
-mysqlclient
 celery
 django-celery-results
+django-celery
