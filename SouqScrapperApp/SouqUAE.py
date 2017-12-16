@@ -34,16 +34,16 @@ class SouqUAEScrapper():
     # Open Http connection
     def open_http_connection(self, call_url, page):
         try:
-            logging.debug('Begin: Call URL -- ',call_url)
+            logging.debug('Begin: Call URL -- {} '.format(call_url))
             time.sleep(5)
             scraped_html_page = requests.get(call_url, timeout=self.time_out,
                                              params=dict(page=page))
-            logging.debug('Finish: Call URL -- ',call_url)
+            logging.debug('Finish: Call URL -- {} '.format(call_url))
             # Check response code
             if scraped_html_page.status_code == 200:
                 return scraped_html_page.text
         except Exception as e:
-            logging.debug('Error during call URL  ',call_url,kawrgs={'Cause':str(e)})
+            logging.debug('Error during call URL  {} cause {}'.format(call_url,str(e)))
             return None
 
     # parse page in soup
@@ -53,7 +53,7 @@ class SouqUAEScrapper():
 
     # Start Scrap
     def startScrappingProcessing(self, url, isFashion, collection, subCollection, tags):
-        logging.debug('Begin: startScrappingProcessing -- ',url)
+        logging.debug('Begin: startScrappingProcessing -- {} '.format(url))
         url += self.list_all_item_attribute
         scrappedPage = self.open_http_connection(call_url=url, page=1)
         if scrappedPage:
@@ -64,7 +64,7 @@ class SouqUAEScrapper():
                 self.scrapFashionResults(page=scrappedPage, url=url, collection=collection,
                                          subCollection=subCollection, tags=tags)
 
-        logging.debug('End: startScrappingProcessing -- ',url)
+        logging.debug('End: startScrappingProcessing -- {} '.format(url))
 
     # Scrap Fashion page result
     def scrapFashionResults(self, page, url, collection, subCollection, tags):
