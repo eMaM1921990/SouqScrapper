@@ -186,7 +186,7 @@ PRODUCT_VARIANT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/variants/{}.j
 
 
 # CELERY
-BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+BROKER_URL = 'amqp://scrapper:souq_admin@localhost:5672//'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
