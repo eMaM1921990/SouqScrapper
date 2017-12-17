@@ -2,8 +2,7 @@ from django.views.decorators.cache import never_cache
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-from SouqScrapperApp.SouqHelper import SouqHelper
-from SouqScrapperApp.SouqUAE import SouqUAEScrapper
+from tasks import *
 
 __author__ = 'eMaM'
 
@@ -13,31 +12,8 @@ __author__ = 'eMaM'
 def fetchScrapper(request, froms, tos):
     resp = {}
     resp['status'] = False
-    scapper = SouqUAEScrapper()
-    souqHelper = SouqHelper()
-    for index in range(int(froms), int(tos), 1):
-        urlDict = souqHelper.urls_dict[index]
-        scapper.startScrappingProcessing(
-            url=urlDict[souqHelper.url_key],
-            isFashion=urlDict[souqHelper.isFashion_key],
-            collection=urlDict[souqHelper.collection_key],
-            subCollection=urlDict[souqHelper.sub_collection_key],
-            tags=urlDict[souqHelper.tags_key])
+    scrapSOUQ.delay(froms, tos)
     resp['status'] = True
+    resp['desc'] = "Shopify will be update once this process done"
     return Response(resp)
 
-
-def scrapSOUQ():
-    scapper = SouqUAEScrapper()
-    souqHelper = SouqHelper()
-    for dict in souqHelper.urls_dict:
-        urlDict = dict
-        scapper.startScrappingProcessing(
-            url=urlDict[souqHelper.url_key],
-            isFashion=urlDict[souqHelper.isFashion_key],
-            collection=urlDict[souqHelper.collection_key],
-            subCollection=urlDict[souqHelper.sub_collection_key],
-            tags=urlDict[souqHelper.tags_key])
-
-
-scrapSOUQ()

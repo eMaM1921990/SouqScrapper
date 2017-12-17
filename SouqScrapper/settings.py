@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'SouqScrapperApp',
     'rest_framework',
     'import_export',
-    'django_celery_results',
+    'background_task',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -187,4 +187,7 @@ PRODUCT_VARIANT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/variants/{}.j
 
 
 # CELERY
-CELERY_RESULT_BACKEND = 'django-db'
+BROKER_URL = 'amqp://guest:guest@localhost:5672//'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'

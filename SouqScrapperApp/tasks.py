@@ -1,19 +1,21 @@
-from celery.task import task
+from __future__ import absolute_import
+
+
+from celery import shared_task
 
 from SouqScrapperApp.SouqHelper import SouqHelper
 from SouqScrapperApp.SouqUAE import SouqUAEScrapper
 
-__author__ = 'eMaM'
 
-@task
-def scrapSOUQ():
+@shared_task
+def scrapSOUQ(froms, tos):
     scapper = SouqUAEScrapper()
-    souqHelper = SouqHelper()
-    for dict in souqHelper.urls_dict:
-        urlDict = dict
+    helper = SouqHelper()
+    for index in range(int(froms), int(tos)):
+        urlDict = helper.urls_dict[index]
         scapper.startScrappingProcessing(
-            url=urlDict[souqHelper.url_key],
-            isFashion=urlDict[souqHelper.isFashion_key],
-            collection=urlDict[souqHelper.collection_key],
-            subCollection=urlDict[souqHelper.sub_collection_key],
-            tags=urlDict[souqHelper.tags_key])
+            url=urlDict[helper.url_key],
+            isFashion=urlDict[helper.isFashion_key],
+            collection=urlDict[helper.collection_key],
+            subCollection=urlDict[helper.sub_collection_key],
+            tags=urlDict[helper.tags_key])
