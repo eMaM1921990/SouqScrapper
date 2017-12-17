@@ -5,6 +5,3 @@ djangorestframework
 django-import-export
 stringcase
 celery
-django-celery-results
-django-celery
-django-background-tasks

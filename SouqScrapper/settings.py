@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'SouqScrapperApp',
     'rest_framework',
     'import_export',
-    'background_task',
 ]
 
 MIDDLEWARE_CLASSES = [
