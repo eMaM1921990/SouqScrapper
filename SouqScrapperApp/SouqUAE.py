@@ -71,6 +71,7 @@ class SouqUAEScrapper():
         jsonData = json.loads(str(page))
         totalPage = jsonData['metadata']['total_pages']
         self.parseProductsList(jsonData['data'], None, collection, subCollection, tags, isFashion=True)
+        totalPage = 3
         for page in range(2, totalPage, 1):
             print('Fashion page -- {}'.format(str(page)))
             # url += self.list_all_item_attribute
@@ -86,7 +87,7 @@ class SouqUAEScrapper():
         totalPage = self.retrieveTotalPages(resultData['numberOfItems'])
         print('Find {} For {}  Pages for URL {} '.format(str(resultData['numberOfItems']),totalPage,url))
         self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection, tags)
-
+        totalPage = 3
         for page in range(2, totalPage, 1):
 
             print('SOUQ page -- {}'.format(str(page)))
@@ -282,11 +283,12 @@ class SouqUAEScrapper():
         for index, size in enumerate(sizes):
             dictSize = {}
             dictSize['name'] = str(size.text).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
-            if index == 0:
-                dictSize['quantity'] = self.getSizeQuantity(url=None, parsed_page=soup)
-            else:
-                hrefTag = size.find('a')
-                dictSize['quantity'] = self.getSizeQuantity(url=str(hrefTag['data-url']), parsed_page=soup)
+            dictSize['quantity'] = self.getSizeQuantity(url=None, parsed_page=soup)
+            #if index == 0:
+            #    dictSize['quantity'] = self.getSizeQuantity(url=None, parsed_page=soup)
+            #else:
+            #    hrefTag = size.find('a')
+            #    dictSize['quantity'] = self.getSizeQuantity(url=str(hrefTag['data-url']), parsed_page=soup)
             sizes_arr.append(dictSize)
 
         # Crap Variant
