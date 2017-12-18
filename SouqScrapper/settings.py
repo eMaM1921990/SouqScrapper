@@ -146,8 +146,8 @@ LOGGING = {
         },
     },
     'loggers': {
-        'etqan_app': {
-            'handlers': ['file','celery'],
+        'SouqScrapperApp': {
+            'handlers': ['file'],
             'level': 'DEBUG',
         },
     }
