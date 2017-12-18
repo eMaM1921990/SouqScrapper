@@ -5,3 +5,4 @@ djangorestframework
 django-import-export
 stringcase
 celery
+psycopg2
