@@ -147,7 +147,7 @@ LOGGING = {
     },
     'loggers': {
         'etqan_app': {
-            'handlers': ['file'],
+            'handlers': ['file','celery'],
             'level': 'DEBUG',
         },
     }
