@@ -13,9 +13,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-from Queue import Queue
-
 from kombu import Exchange
+from kombu import Queue
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -204,7 +203,7 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_IGNORE_RESULT = True
-CELERY_QUEUES = [
+CELERY_QUEUES = (
     Queue('default', Exchange('default'), routing_key='default'),
     Queue('scrapFirstQuarterSouq', Exchange('scrapFirstQuarterSouq'), routing_key='scrapFirstQuarterSouq'),
     Queue('scrapSecondQuarterSouq', Exchange('scrapSecondQuarterSouq'), routing_key='scrapSecondQuarterSouq'),
@@ -212,7 +211,7 @@ CELERY_QUEUES = [
     Queue('scrapFourthQuarterSouq', Exchange('scrapFourthQuarterSouq'), routing_key='scrapFourthQuarterSouq'),
     Queue('scrapFiveQuarterSouq', Exchange('scrapFiveQuarterSouq'), routing_key='scrapFiveQuarterSouq'),
     Queue('scrapSixQuarterSouq', Exchange('scrapSixQuarterSouq'), routing_key='scrapSixQuarterSouq'),
-]
+)
 
 
 CELERY_ROUTES = {
