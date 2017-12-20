@@ -13,6 +13,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from Queue import Queue
+
+from kombu import Exchange
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -200,4 +204,22 @@ CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_IGNORE_RESULT = True
+CELERY_QUEUES = [
+    Queue('default', Exchange('default'), routing_key='default'),
+    Queue('scrapFirstQuarterSouq', Exchange('scrapFirstQuarterSouq'), routing_key='scrapFirstQuarterSouq'),
+    Queue('scrapSecondQuarterSouq', Exchange('scrapSecondQuarterSouq'), routing_key='scrapSecondQuarterSouq'),
+    Queue('scrapThirdQuarterSouq', Exchange('scrapThirdQuarterSouq'), routing_key='scrapThirdQuarterSouq'),
+    Queue('scrapFourthQuarterSouq', Exchange('scrapFourthQuarterSouq'), routing_key='scrapFourthQuarterSouq'),
+    Queue('scrapFiveQuarterSouq', Exchange('scrapFiveQuarterSouq'), routing_key='scrapFiveQuarterSouq'),
+    Queue('scrapSixQuarterSouq', Exchange('scrapSixQuarterSouq'), routing_key='scrapSixQuarterSouq'),
+]
 
+
+CELERY_ROUTES = {
+    'scrapFirstQuarterSouq': {'queue': 'scrapFirstQuarterSouq', 'routing_key': 'scrapFirstQuarterSouq'},
+    'scrapSecondQuarterSouq': {'queue': 'scrapSecondQuarterSouq', 'routing_key': 'scrapSecondQuarterSouq'},
+    'scrapThirdQuarterSouq': {'queue': 'scrapThirdQuarterSouq', 'routing_key': 'scrapThirdQuarterSouq'},
+    'scrapFourthQuarterSouq': {'queue': 'scrapFourthQuarterSouq', 'routing_key': 'scrapFourthQuarterSouq'},
+    'scrapFiveQuarterSouq': {'queue': 'scrapFiveQuarterSouq', 'routing_key': 'scrapFiveQuarterSouq'},
+    'scrapSixQuarterSouq': {'queue': 'scrapSixQuarterSouq', 'routing_key': 'scrapSixQuarterSouq'},
+}
