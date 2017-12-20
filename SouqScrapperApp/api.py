@@ -9,10 +9,15 @@ __author__ = 'eMaM'
 
 @never_cache
 @api_view(['GET'])
-def fetchScrapper(request, froms, tos):
+def fetchScrapper(request):
     resp = {}
     resp['status'] = False
-    scrapSOUQ.delay(froms, tos)
+    scrapFirstQuarterSouq.delay()
+    scrapSecondQuarterSouq.delay()
+    scrapThirdQuarterSouq.delay()
+    scrapFourthQuarterSouq.delay()
+    scrapFiveQuarterSouq.delay()
+    scrapSixQuarterSouq.delay()
     resp['status'] = True
     resp['desc'] = "Shopify will be update once this process done"
     return Response(resp)
