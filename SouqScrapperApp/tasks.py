@@ -1,13 +1,13 @@
 from __future__ import absolute_import
 
-from celery import shared_task, app
+from celery import task
 from celery.backends.database import retry
 
 from SouqScrapperApp.SouqHelper import SouqHelper
 from SouqScrapperApp.SouqUAE import SouqUAEScrapper
 
 
-@app.task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
+@task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
 def scrapFirstQuarterSouq():
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
@@ -26,7 +26,7 @@ def scrapFirstQuarterSouq():
             retry(e)
 
 
-@app.task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
+@task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
 def scrapSecondQuarterSouq():
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
@@ -45,7 +45,7 @@ def scrapSecondQuarterSouq():
             retry(e)
 
 
-@app.task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
+@task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
 def scrapThirdQuarterSouq():
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
@@ -64,7 +64,7 @@ def scrapThirdQuarterSouq():
             retry(e)
 
 
-@app.task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
+@task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
 def scrapFourthQuarterSouq():
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
@@ -83,7 +83,7 @@ def scrapFourthQuarterSouq():
             retry(e)
 
 
-@app.task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
+@task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
 def scrapFiveQuarterSouq():
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
@@ -102,7 +102,7 @@ def scrapFiveQuarterSouq():
             retry(e)
 
 
-@app.task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
+@task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
 def scrapSixQuarterSouq():
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
