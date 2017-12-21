@@ -27,7 +27,7 @@ def scrapFirstQuarterSouq(input):
 
 
 @task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
-def scrapSecondQuarterSouq():
+def scrapSecondQuarterSouq(input):
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
     for index in range(int(26), int(50)):
@@ -46,7 +46,7 @@ def scrapSecondQuarterSouq():
 
 
 @task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
-def scrapThirdQuarterSouq():
+def scrapThirdQuarterSouq(input):
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
     for index in range(int(51), int(75)):
@@ -65,7 +65,7 @@ def scrapThirdQuarterSouq():
 
 
 @task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
-def scrapFourthQuarterSouq():
+def scrapFourthQuarterSouq(input):
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
     for index in range(int(76), int(100)):
@@ -84,7 +84,7 @@ def scrapFourthQuarterSouq():
 
 
 @task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
-def scrapFiveQuarterSouq():
+def scrapFiveQuarterSouq(input):
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
     for index in range(int(101), int(125)):
@@ -103,7 +103,7 @@ def scrapFiveQuarterSouq():
 
 
 @task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
-def scrapSixQuarterSouq():
+def scrapSixQuarterSouq(input):
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
     for index in range(int(126), int(150)):
