@@ -8,7 +8,7 @@ from SouqScrapperApp.SouqUAE import SouqUAEScrapper
 
 
 @task(bind=True, soft_time_limit=60 * 60 * 24, time_limit=60 * 60 * 24, default_retry_delay=300, max_retries=5)
-def scrapFirstQuarterSouq():
+def scrapFirstQuarterSouq(input):
     scapper = SouqUAEScrapper()
     helper = SouqHelper()
     for index in range(int(0), int(25)):
