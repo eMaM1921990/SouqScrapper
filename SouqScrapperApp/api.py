@@ -9,7 +9,7 @@ __author__ = 'eMaM'
 
 @never_cache
 @api_view(['GET'])
-def fetchScrapper(request, froms, tos):
+def fetchScrapper(request, froms, to):
     resp = {}
     resp['status'] = False
     scrapFirstQuarter.delay(0, 25)
