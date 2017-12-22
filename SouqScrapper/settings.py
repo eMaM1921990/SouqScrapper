@@ -190,3 +190,6 @@ BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+CELERYD_TASK_SOFT_TIME_LIMIT = 60 * 60 * 24
+
+# celery worker -A ... -Q random-tasks --concurrency=4

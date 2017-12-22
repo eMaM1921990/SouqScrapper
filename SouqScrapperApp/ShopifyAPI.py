@@ -132,12 +132,15 @@ class ShopifyIntegration():
             data = self.getShopifySouqProduct(productDict=productDict)
         else:
             data = self.getShopifyFashionProduct(productDict=productDict)
-
-        r = requests.post(url=self.end_point, data=json.dumps(data), headers={'Content-Type': 'application/json'})
-        print productDict['title'] + 'saved to shopfiy'
-        # update variant Image
-        self.updateProductVarirant(r.text)
-        return r.text
+        try:
+            r = requests.post(url=self.end_point, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+            print productDict['title'] + 'saved to shopfiy'
+            # update variant Image
+            self.updateProductVarirant(r.text)
+            return r.text
+        except Exception as e:
+            print str(e)
+            return None
 
     def removeShopifyProduct(self, id):
         end_point_update = settings.PRODUCT_UPDATE_URL.format(settings.API_KEY, settings.API_PASSWORD, id)
