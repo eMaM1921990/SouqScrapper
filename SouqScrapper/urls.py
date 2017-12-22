@@ -20,6 +20,6 @@ from SouqScrapperApp import api
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/v1/scrapSouq/(?P<froms>.+)/(?P<tos>.+)/$',api.fetchScrapper, name='fetchScrapper'),
+    url(r'^api/v1/scrapSouq/$',api.fetchScrapper, name='fetchScrapper'),
 
 ]

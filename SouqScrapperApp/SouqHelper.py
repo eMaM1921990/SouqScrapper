@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
 
-from background_task import background
-
-from SouqScrapperApp.SouqUAE import SouqUAEScrapper
-
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -19,227 +15,295 @@ class SouqHelper():
         self.url_key = 'url'
         self.tags_key = 'tags'
         self.urls_dict = [
+            #0
             {self.collection_key: "Men's T-Shirts",
              self.sub_collection_key: 'Round Neck',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/round-neck/a-t-6356-6274-6503/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's T-Shirts, Round Neck"},
 
+
+            #1
             {self.collection_key: "Men's T-Shirts",
              self.sub_collection_key: 'V Neck',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/l/v-neck/a-t-6356-6274-6315-6503/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's T-Shirts, V Neck "},
 
+
+            #2
             {self.collection_key: "Men's T-Shirts",
              self.sub_collection_key: 'Shirt Neck',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/t--shirts/l/shirt-neck/a-t-6356-6274-6315-6503/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's T-Shirts, Shirt Neck "},
 
+            #3
             {self.collection_key: "Men's Vests",
              self.sub_collection_key: None,
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/tank-tops/men/tank-tops/a-6356-6274/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Vests "},
 
+            #4
             {self.collection_key: "Men's Shorts",
              self.sub_collection_key: 'Bermuda Shorts',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shorts/shorts-482%7Csportswear-467/men/bermuda-short/a-t-6356-6335/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Shorts, Bermuda Shorts "},
 
+
+            #5
             {self.collection_key: "Men's Shorts",
              self.sub_collection_key: 'Drawstring Shorts',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shorts/shorts-482%7Csportswear-467/men/drawstring-short/a-t-6356-6335/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Shorts, Drawstring Shorts "},
 
+
+            #6
             {self.collection_key: "Men's Shorts",
              self.sub_collection_key: 'Cargo Shorts',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shorts/shorts-482%7Csportswear-467/men/cargo-short/a-t-6356-6335/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Shorts, Cargo Shorts "},
 
+
+            #7
             {self.collection_key: "Men's Jeans",
              self.sub_collection_key: 'Slim Fit',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/slim-fit/a-t-6356-6314/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Jeans, Slim Fit "},
 
+
+            #8
             {self.collection_key: "Men's Jeans",
              self.sub_collection_key: 'Straight',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/straight/a-t-6356-6314/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Jeans, Straight "},
 
+
+            #9
             {self.collection_key: "Men's Jeans",
              self.sub_collection_key: 'Skinny',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/skinny/a-t-6356-6314/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Jeans, Skinny "},
 
+            #10
             {self.collection_key: "Men's Jeans",
              self.sub_collection_key: 'Ripped',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jeans/pants-477/men/ripped/a-t-6356-6314/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Jeans, Ripped "},
 
+            #11
             {self.collection_key: "Men's Coats, Jackets & Hoodies",
              self.sub_collection_key: 'Zip Up Hoodie',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jackets/jackets---and---coats-473/men/zip-up-hoodie/a-t-6356-6309/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Coats, Jackets & Hoodies, Zip Up Hoodie "},
 
+            #12
             {self.collection_key: "Men's Coats, Jackets & Hoodies",
              self.sub_collection_key: 'Puffer Jacket',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jackets/jackets---and---coats-473/men/puffer-jacket/a-t-6356-6309/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Coats, Jackets & Hoodies, Puffer Jacket "},
 
+
+            #13
             {self.collection_key: "Men's Coats, Jackets & Hoodies",
              self.sub_collection_key: 'Bomber Jacket',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/jackets/jackets---and---coats-473/men/bomber-jacket/a-t-6356-6309/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Coats, Jackets & Hoodies, Bomber Jacket "},
 
+            #14
             {self.collection_key: "Men's Shirts",
              self.sub_collection_key: 'Full Sleeve',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/shirts/full-sleeve/a-t-6356-6274-6490/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Shirts, Full Sleeve "},
 
+
+            #15
             {self.collection_key: "Men's Shirts",
              self.sub_collection_key: 'Short Sleeve',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/shirts/tops-488%7C467/men/shirts/short-sleeve/a-t-6356-6274-6490/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Shirts, Short Sleeve "},
 
+            #16
             {self.collection_key: "Men's Suits",
              self.sub_collection_key: 'Tuxedo',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/suits/suits-486/men/tuxedo/a-t-6356-6332/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Suits, Tuxedo "},
 
+
+            #17
             {self.collection_key: "Men's Suits",
              self.sub_collection_key: 'Business Suit',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/suits/suits-486/men/business-suit/a-t-6356-6332/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Suits, Business Suit "},
 
+
+            #18
             {self.collection_key: "Men's Underwear",
              self.sub_collection_key: 'Boxers',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/underwear/underwear-489/men/boxers/a-t-6356-6337/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Underwear, Boxers"
              },
+
+
+            #19
             {self.collection_key: "Men's Underwear",
              self.sub_collection_key: 'Briefs',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/underwear/underwear-489/men/briefs/a-t-6356-6337/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Underwear, Briefs"},
 
+
+            #20
             {self.collection_key: "Men's Sportswear",
              self.sub_collection_key: 'Sports Tops',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-tops/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Sportswear, Sports Tops"},
 
+
+            #21
             {self.collection_key: "Men's Sportswear",
              self.sub_collection_key: 'Sports Shorts',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-shorts/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Sportswear, Sports Shorts"},
 
+
+            #21
             {self.collection_key: "Men's Sportswear",
              self.sub_collection_key: 'Sports Pants',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-pants/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Sportswear, Sports Pants"},
 
+
+            #22
             {self.collection_key: "Men's Sportswear",
              self.sub_collection_key: 'Sports Jackets',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-jackets/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Sportswear, Sports Jackets"},
 
+
+            #23
             {self.collection_key: "Men's Sportswear",
              self.sub_collection_key: 'Sports Vests',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/sportswear/sportswear-467/men/sport-vests/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Sportswear, Sports Vests"},
 
+
+            #24
             {self.collection_key: "Men's Swimwear",
              self.sub_collection_key: 'Swim Shorts',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/swimwear/swimwear-487/men/swim-shorts/a-t-6356-6435/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Swimwear, Swim Shorts"},
 
+
+            #25
             {self.collection_key: "Men's Swimwear",
              self.sub_collection_key: 'Swim Trunks',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/swimwear/swimwear-487/men/swim-trunk/a-t-6356-6435/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Clothing, Men's Swimwear, Swim Trunks"},
 
+
+            #26
             {self.collection_key: "Men's Belts",
              self.sub_collection_key: None,
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-belt/belts-557%7Caccessories-466/a-t/s/'},
 
+
+            #27
             {self.collection_key: "Men's Hats",
              self.sub_collection_key: None,
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-cap-or-hat/hats---and---caps-566/men/baseball---and---snapback-hat/a-t-6356-6573/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Accessories, Men's Hats"},
 
+
+            #28
             {self.collection_key: "Men's Wallets",
              self.sub_collection_key: 'Bifold Wallets',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/bifold-wallets/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Accessories, Men's Wallets, Bifold Wallets"},
 
+
+            #29
             {self.collection_key: "Men's Wallets",
              self.sub_collection_key: 'Card & Id Cases',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/card---and---id-cases/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Accessories, Men's Wallets, Card & ID Cases"},
 
+            #30
             {self.collection_key: "Men's Wallets",
              self.sub_collection_key: 'Trifold Wallets',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/trifold-wallets/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Accessories, Men's Wallets, Trifold Wallets"},
 
+
+            #31
             {self.collection_key: "Men's Wallets",
              self.sub_collection_key: 'Zip Around Wallets',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/zip-around-wallets/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Accessories, Men's Wallets, Zip Around Wallets"},
 
+
+            #32
             {self.collection_key: "Men's Wallets",
              self.sub_collection_key: 'Flap Wallets',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/flap-wallets/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Accessories, Men's Wallets, Flap Wallets"},
 
+
+            #33
             {self.collection_key: "Men's Wallets",
              self.sub_collection_key: 'Clip Wallet',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/clip-wallet/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Accessories, Men's Wallets, Clip Wallet"},
 
+
+            #34
             {self.collection_key: "Men's Wallets",
              self.sub_collection_key: 'Travel & Document Holders',
              self.isFashion_key: False,
              self.url_key: 'https://uae.souq.com/ae-en/men-wallet/wallets-533/men/travel---and---document-holders/a-t-6356-5700/s/',
              self.tags_key: "Men's, Souq, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Accessories, Men's Wallets, Travel & Document Holders"},
 
+
+            #35
             {self.collection_key: "Men's Watches",
              self.sub_collection_key: 'Casual Watch',
              self.isFashion_key: True,
              self.url_key: 'https://fashion.souq.com/ae-en/search?campaign_id=3797?q=eyJzIjoiYmVzdCIsImYiOnsiaWRfdHlwZV9pdGVtIjpbIjQ5MCJdLCJzZ2VuX2dlbmRlcl9lbiI6WyJtZW4iXSwic2dlbl93YXRjaF90eXBlX2VuIjpbImNhc3VhbCB3YXRjaCJdfX0%3D',
              self.tags_key: "Men's, Souq.com, UAE,Qatar,Oman, Bahrain, Kuwait, Men's Accessories, Men's Watches , Casual Watch "},
 
+
+            #36
             {self.collection_key: "Men's Watches",
              self.sub_collection_key: 'Dress Watch',
              self.isFashion_key: True,
