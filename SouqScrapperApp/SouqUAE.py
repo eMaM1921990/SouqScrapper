@@ -2,6 +2,7 @@
 import sys
 
 import bs4
+from celery import shared_task
 
 from SouqScrapperApp.ShopifyAPI import ShopifyIntegration
 import requests
@@ -52,6 +53,7 @@ class SouqUAEScrapper():
         return soup
 
     # Start Scrap
+
     def startScrappingProcessing(self, url, isFashion, collection, subCollection, tags):
         print('Begin: startScrappingProcessing -- {} '.format(url))
         url += self.list_all_item_attribute

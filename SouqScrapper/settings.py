@@ -13,6 +13,9 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+from kombu import Exchange
+from kombu import Queue
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -190,6 +193,30 @@ BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERYD_TASK_SOFT_TIME_LIMIT = 60 * 60 * 24
+CELERY_TASK_SOFT_TIME_LIMIT = 60 * 60 * 24
+CELERY_ACKS_LATE = True
+CELERY_PREFETCH_MULTIPLIER = 100
+CELERY_MAX_TASKS_PER_CHILD = 100
+
 
 # celery worker -A ... -Q random-tasks --concurrency=4
+CELERY_IGNORE_RESULT = True
+# CELERY_QUEUES = (
+#     # Queue('default', Exchange('default'), routing_key='default'),
+#     Queue('scrapFirstQuarter', Exchange('scrapFirstQuarter'), routing_key='scrapFirstQuarter'),
+#     Queue('scrapSecondQuarter', Exchange('scrapSecondQuarter'), routing_key='scrapSecondQuarter'),
+#     Queue('scrapThirdQuarter', Exchange('scrapThirdQuarter'), routing_key='scrapThirdQuarter'),
+#     Queue('scrapForthQuarter', Exchange('scrapForthQuarter'), routing_key='scrapForthQuarter'),
+#     Queue('scrapFiveQuarter', Exchange('scrapFiveQuarter'), routing_key='scrapFiveQuarter'),
+#     Queue('scrapSixQuarter', Exchange('scrapSixQuarter'), routing_key='scrapSixQuarter'),
+# )
+#
+#
+# CELERY_ROUTES = {
+#     'scrapFirstQuarter': {'queue': 'scrapFirstQuarter', 'routing_key': 'scrapFirstQuarter'},
+#     'scrapSecondQuarter': {'queue': 'scrapSecondQuarter', 'routing_key': 'scrapSecondQuarter'},
+#     'scrapThirdQuarter': {'queue': 'scrapThirdQuarter', 'routing_key': 'scrapThirdQuarter'},
+#     'scrapForthQuarter': {'queue': 'scrapForthQuarter', 'routing_key': 'scrapForthQuarter'},
+#     'scrapFiveQuarter': {'queue': 'scrapFiveQuarter', 'routing_key': 'scrapFiveQuarter'},
+#     'scrapSixQuarter': {'queue': 'scrapSixQuarterSouq', 'routing_key': 'scrapSixQuarterSouq'},
+# }

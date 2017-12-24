@@ -1,4 +1,4 @@
-#!/Users/mac/.virtualenvs/souqEnv/bin
+#!/usr/bin/env python
 import os
 import sys
 import django
@@ -20,7 +20,7 @@ class CustomScraper(object):
     def scrape(self):
         print 'scraping...'
 
-    def scrapSOUQ(froms, tos):
+    def scrapSOUQ(self,froms, tos):
         scapper = SouqUAEScrapper()
         helper = SouqHelper()
         for index in range(int(froms), int(tos)):
@@ -35,4 +35,4 @@ class CustomScraper(object):
 
 if __name__ == '__main__':
     scraper = CustomScraper()
-    scraper.scrapSOUQ()
+    scraper.scrapSOUQ(0,10)

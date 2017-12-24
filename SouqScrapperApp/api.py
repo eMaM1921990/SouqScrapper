@@ -9,16 +9,16 @@ __author__ = 'eMaM'
 
 @never_cache
 @api_view(['GET'])
-def fetchScrapper(request, froms, to):
+def fetchScrapper(request):
     resp = {}
     resp['status'] = False
-    scrapFirstQuarter.delay(0, 25)
-    scrapSecondQuarter.delay(25,50)
-    scrapThirdQuarter.delay(51,75)
-    scrapForthQuarter.delay(76,100)
-    scrapFiveQuarter.delay(101,125)
-    scrapSixQuarter.delay(126,150)
+    scapper = SouqUAEScrapper()
+    helper = SouqHelper()
+    for url in helper.urls_dict:
+        scrap.delay(url=url[helper.url_key], collection=url[helper.collection_key],
+                    subCollection=url[helper.sub_collection_key],
+                    isFashion=url[helper.isFashion_key], tags=url[helper.tags_key])
+
     resp['status'] = True
     resp['desc'] = "Shopify will be update once this process done"
     return Response(resp)
-
