@@ -12,15 +12,18 @@ def ServiceTemporarilyDownError(object):
 @shared_task(max_retries=10)
 def scrap(url, collection, subCollection, tags, isFashion):
     scapper = SouqUAEScrapper()
+    try:
+        scapper.startScrappingProcessing(
+            url=url,
+            collection=collection,
+            subCollection=subCollection,
+            tags=tags,
+            isFashion=isFashion
 
-    scapper.startScrappingProcessing(
-        url=url,
-        collection=collection,
-        subCollection=subCollection,
-        tags=tags,
-        isFashion=isFashion
-
-    )
+        )
+    except ServiceTemporarilyDownError :
+        print 'error'
+        raise scrap.retry()
 
 # @shared_task(max_retries=10)
 # def scrapFirstQuarter(froms, tos):
