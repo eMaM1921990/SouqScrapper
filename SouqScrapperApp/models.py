@@ -39,3 +39,22 @@ class Product(models.Model):
     class Meta:
         managed = MANAGED
         db_table = 'products'
+
+
+
+
+class Stores(models.Model):
+    url = models.URLField()
+    tags = models.TextField()
+    is_fashion = models.BooleanField(default=False)
+    store = models.CharField(max_length=150,default='Souq')
+
+    def __str__(self):
+        return self.store
+
+    def __unicode__(self):
+        return self.store
+
+    class Meta:
+        managed = MANAGED
+        db_table = 'stores'

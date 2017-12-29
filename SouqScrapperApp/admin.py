@@ -7,7 +7,7 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from SouqScrapperApp.models import Product
+from SouqScrapperApp.models import Product,Stores
 
 
 
@@ -36,3 +36,5 @@ class ProductAdmin(ImportExportModelAdmin):
 
 
 admin.site.register(Product, ProductAdmin)
+
+admin.site.register(Stores)
