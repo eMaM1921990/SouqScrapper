@@ -82,12 +82,27 @@ class ShopifyIntegration():
         dict = {
             "compare_at_price": productDict['price'],
             "price": productDict['compareAtPrice'],
-            "option1": productDict['variants']['DialColor'],
-            "option2": productDict['variants']['BandColor'],
             "inventory_quantity": productDict['quantity'],
             "inventory_management": "shopify"
         }
+
+        # Option Dict
+        option_dict = {}
+        option_arr = []
+
+        if productDict['variants']['DialColor']:
+            dict['option1'] = productDict['variants']['DialColor']
+            var_dict = {'name': "Dial Color", 'position': 1, 'values': [productDict['variants']['DialColor']]}
+            option_arr.append(var_dict)
+
+        if productDict['variants']['BandColor']:
+            dict['option2'] = productDict['variants']['BandColor']
+            var_dict = {'name': "Band Color", 'position': 2, 'values': [productDict['variants']['BandColor']]}
+            option_arr.append(var_dict)
+
         variants.append(dict)
+
+        option_dict['options'] = option_arr
 
         # data
         data = {
@@ -107,23 +122,12 @@ class ShopifyIntegration():
                 ],
                 "tags": ','.join(productDict['tags']),
                 "variants": variants,
-                "options": [
-                    {
-                        "name": "Dial Color",
-                        "position": 1,
-                        "values": [
-                            productDict['variants']['DialColor']
-                        ]
-                    },
-                    {
-                        "name": "Band Color",
-                        "position": 2,
-                        "values": productDict['variants']['BandColor']
-                    }
-                ]
 
             }
         }
+
+        if option_arr and len(option_arr) > 0:
+            data['product']['options'] = option_arr
 
         return data
 
@@ -139,7 +143,7 @@ class ShopifyIntegration():
             self.updateProductVarirant(r.text)
             return r.text
         except Exception as e:
-            print str(e)
+            print r.content
             return None
 
     def removeShopifyProduct(self, id):

@@ -19,6 +19,13 @@ class ProductResource(resources.ModelResource):
         skip_unchanged = True
 
 
+class StoreResource(resources.ModelResource):
+
+    class Meta:
+        model = Stores
+        skip_unchanged = True
+
+
 
 
 class ProductAdmin(ImportExportModelAdmin):
@@ -35,6 +42,19 @@ class ProductAdmin(ImportExportModelAdmin):
         verbose_name_plural = 'Products'
 
 
+class StoreAdmin(ImportExportModelAdmin):
+    list_display = ['id', 'store', 'url', 'tags']
+
+    list_per_page = 10
+    search_fields = ['id', 'store', 'url', 'tags']
+
+    resource_class = StoreResource
+
+    class Meta:
+        verbose_name = 'Stores'
+        verbose_name_plural = 'Stores'
+
+
 admin.site.register(Product, ProductAdmin)
 
-admin.site.register(Stores)
+admin.site.register(Stores,StoreAdmin)

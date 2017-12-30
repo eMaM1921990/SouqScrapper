@@ -6,3 +6,4 @@ django-import-export
 stringcase
 celery
 sqlalchemy
+psycopg2
