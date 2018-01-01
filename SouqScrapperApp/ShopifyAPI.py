@@ -21,16 +21,29 @@ class ShopifyIntegration():
 
         # Variants
         variants = []
-        for size in productDict['variants']['size']:
-            dict = {
-                "compare_at_price": productDict['compareAtPrice'],
-                "price": productDict['price'],
-                "option1": productDict['color'],
-                "option2": size['name'],
-                "inventory_quantity": size['quantity'],
-                "inventory_management": "shopify"
-            }
-            variants.append(dict)
+        option_arry = []
+        dict = {
+            "compare_at_price": productDict['compareAtPrice'],
+            "price": productDict['price'],
+            "inventory_quantity": productDict['variants']['quantity'],
+            "inventory_management": "shopify"
+        }
+
+        if len(productDict['variants'].items()) > 1:
+            limit = len(productDict['variants'].items()) - 1
+            indx = 1
+            for var in productDict['variants'].items()[:limit]:
+                dict['option' + str(indx)] = var[1]
+                option_dict = {
+                    "name": var[0],
+                    "position": indx,
+                    "values": [
+                        var[1]
+                    ]
+                }
+                option_arry.append(option_dict)
+                indx += 1
+        variants.append(dict)
 
         # data
         data = {
@@ -49,24 +62,14 @@ class ShopifyIntegration():
                     }
                 ],
                 "tags": ','.join(productDict['tags']),
-                "variants": variants,
-                "options": [
-                    {
-                        "name": "Color",
-                        "position": 1,
-                        "values": [
-                            productDict['color']
-                        ]
-                    },
-                    {
-                        "name": "Size",
-                        "position": 2,
-                        "values": productDict['variants']['size']
-                    }
-                ]
+                "variants": variants
+
 
             }
         }
+
+        if len(option_arry) > 0 :
+            data['product']['options'] = option_arry
 
         return data
 
@@ -138,7 +141,7 @@ class ShopifyIntegration():
             data = self.getShopifyFashionProduct(productDict=productDict)
         try:
             r = requests.post(url=self.end_point, data=json.dumps(data), headers={'Content-Type': 'application/json'})
-            print productDict['title'] + 'saved to shopfiy'
+            print productDict['title'] + 'shopfiy status code '+str(r.status_code)
             # update variant Image
             self.updateProductVarirant(r.text)
             return r.text

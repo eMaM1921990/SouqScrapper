@@ -14,12 +14,11 @@ import json
 from models import Product
 from SouqScrapperApp.tagsLookUps import getPriceTags, getColorTags
 import logging
-logger = logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
 
 reload(sys)
 sys.setdefaultencoding('utf8')
-
 
 __author__ = 'eMaM'
 
@@ -44,7 +43,7 @@ class SouqUAEScrapper():
             if scraped_html_page.status_code == 200:
                 return scraped_html_page.text
         except Exception as e:
-            print('Error during call URL  {} cause {}'.format(call_url,str(e)))
+            print('Error during call URL  {} cause {}'.format(call_url, str(e)))
             return None
 
     # parse page in soup
@@ -56,7 +55,8 @@ class SouqUAEScrapper():
 
     def startScrappingProcessing(self, url, isFashion, collection, subCollection, tags):
         print('Begin: startScrappingProcessing -- {} '.format(url))
-        url += self.list_all_item_attribute
+        if not isFashion:
+            url += self.list_all_item_attribute
         scrappedPage = self.open_http_connection(call_url=url, page=1)
         if scrappedPage:
             if not isFashion:
@@ -91,7 +91,6 @@ class SouqUAEScrapper():
         self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection, tags)
         totalPage = 5
         for page in range(2, totalPage, 1):
-
             # print('SOUQ page -- {}'.format(str(page)))
             # url += self.list_all_item_attribute
             scrappedPage = self.open_http_connection(call_url=url, page=page)
@@ -106,7 +105,9 @@ class SouqUAEScrapper():
 
     def retrieveURLTags(self, page):
         soup = self.parsePageSoap(page=page)
-        ulTags = soup.find('ul', attrs={'class': 'refienments-selected'}).contents
+        ulTags = soup.find('ul', attrs={'class': 'refienments-selected'})
+        if ulTags:
+            ulTags = ulTags.contents
         tags = []
         for index, liTag in enumerate(ulTags):
             if liTag.name == 'li':
@@ -139,7 +140,7 @@ class SouqUAEScrapper():
 
                     shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product, isFashion=isFashion)
                     if shopifyJson:
-                    # update product
+                        # update product
                         shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
 
     def retrieveProductImageBySize(self, soup):
@@ -197,7 +198,7 @@ class SouqUAEScrapper():
 
         return defaultDesc
 
-    def retrieveFashionVariant(self, soup, product):
+    def retrieveProductVariant(self, soup, product):
         productExtra = soup.find_all('script', attrs={'type': 'text/javascript'})[5].text
         productExtra = productExtra.replace('var globalBucket =', '')
         productExtra = str(productExtra).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
@@ -206,7 +207,7 @@ class SouqUAEScrapper():
         quantity = resultData['Page_Data']['product']['quantity']
         variantDict = {}
         variantDict['quantity'] = quantity
-        if variants and len(variants)>0:
+        if variants and len(variants) > 0:
             for variant in str(variants).split(','):
                 keys = variant.split(":")
                 variantDict[keys[0]] = keys[1]
@@ -236,11 +237,13 @@ class SouqUAEScrapper():
         # value = '%.1f' % round(value, 1)
         return value
 
-    def getTagsFronsizes(self, sizeDict):
-        sizeArr = []
-        for size in sizeDict:
-            sizeArr.append(size['name'])
-        return sizeArr
+    def getTagsFronsizes(self, variant):
+        if variant:
+            sizeArr = []
+            for k, v in variant.iteritems():
+                if k != 'quantity':
+                    sizeArr.append(getColorTags(v))
+            return sizeArr
 
     def retrieveProductDetails(self, url, commonTags, collection, subCollection, otherTags, isFashion=False):
         product_page_result = self.open_http_connection(call_url=url, page=None)
@@ -283,30 +286,20 @@ class SouqUAEScrapper():
         # Get product color and description
         self.retrieveProductDescAndColor(soup=soup, product=product)
 
-        sizes = soup.find_all(attrs={'class': "item-connection"})
-        sizes_arr = []
-        for index, size in enumerate(sizes):
-            dictSize = {}
-            dictSize['name'] = str(size.text).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
-            if size.name == 'a':
-                dictSize['name'] = str(size.text).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
-
-            if size.name =='span':
-                dictSize['name'] = str(size.text).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
-
-            dictSize['quantity'] = self.getSizeQuantity(url=None, parsed_page=soup)
-            sizes_arr.append(dictSize)
-
         # Crap Variant
         product['variants'] = {}
-        if not isFashion:
-            product['variants']['size'] = sizes_arr
-            product['variants']['colors'] = product['color']
-        else:
-            product['variants'] = self.retrieveFashionVariant(soup, product)
+        product['variants'] = self.retrieveProductVariant(soup, product)
 
         # Get other specs
-        product['specs'] = (soup.find('div', attrs={'id': 'specs-full'}).contents)[1]
+        specs = None
+        specsTag = soup.find('div', attrs={'id': 'specs-full'})
+        if specsTag:
+            specs = (specsTag.contents)[1]
+        else:
+            specsTag = soup.find('div', attrs={'id': 'specs-short'})
+            if specsTag:
+                specs = (specsTag.contents)[1]
+        product['specs'] = specs
 
         # Tags
         tags = []
@@ -317,15 +310,13 @@ class SouqUAEScrapper():
 
         # Get Product tags
         tags.append(getPriceTags(price=compareAtPrice))
-        # Get Color Tags
-        if product['color']:
-            tags.append(getColorTags(tag=product['color']))
+
         # Get Brand Tags
         tags.append(product['brand'])
         # Get Collection tags
         tags.append(product['collection'])
 
-        product['tags'] = tags + commonTags + self.getTagsFronsizes(sizes_arr)
+        product['tags'] = tags + commonTags + self.getTagsFronsizes(product['variants'])
         # print product
         return product
 
@@ -363,7 +354,7 @@ class SouqUAEScrapper():
         product['isFashion'] = isFashion
         product['variants'] = {}
 
-        variants = self.retrieveFashionVariant(soup, product)
+        variants = self.retrieveProductVariant(soup, product)
         product['variants']['DialColor'] = variants['DialColor'] if 'DialColor' in variants else None
         product['variants']['BandColor'] = variants['BandColor'] if 'BandColor' in variants else None
         product['quantity'] = variants['quantity']
@@ -404,9 +395,9 @@ class SouqUAEScrapper():
             record.discount_amount = product['discountAmount']
             record.url = product['url']
             if not isFashion:
-                record.color = product['color']
+                record.color = None
             else:
-                if  product['variants']['DialColor'] and   product['variants']['BandColor']:
+                if product['variants']['DialColor'] and product['variants']['BandColor']:
                     record.color = product['variants']['DialColor'] + ',' + product['variants']['BandColor']
                 else:
                     record.color = None
@@ -436,18 +427,24 @@ class SouqUAEScrapper():
                 record.image_5 = None
 
             if not isFashion:
-                record.variant_option_one = product['color']
+                try:
+                    record.variant_option_one = str(product['variants'].items()[0])
+                except Exception as e:
+                    print str(e)
+                    record.variant_option_one = None
             else:
-                record.variant_option_one = product['variants']['DialColor'] if 'DialColor' in product['variants'] else None
+                record.variant_option_one = product['variants']['DialColor'] if 'DialColor' in product[
+                    'variants'] else None
 
             if not isFashion:
-                size_option = []
-                for size in product['variants']['size']:
-                    size_option.append(size['name'])
-
-                record.variant_option_two = ','.join(size_option)
+                try:
+                    record.variant_option_two = str(product['variants'].items()[1])
+                except Exception as e:
+                    print str(e)
+                    record.variant_option_two = None
             else:
-                record.variant_option_two = product['variants']['BandColor'] if 'BandColor' in product['variants'] else None
+                record.variant_option_two = product['variants']['BandColor'] if 'BandColor' in product[
+                    'variants'] else None
 
             record.brand = str(product['brand'])
             record.tags = ','.join(product['tags'])
@@ -456,5 +453,5 @@ class SouqUAEScrapper():
             return record
         except Exception as e:
 
-            print('Error during save proudct {}  cause {} '.format(product['title'],str(e)))
+            print('Error during save proudct {}  cause {} '.format(product['title'], str(e)))
             return None

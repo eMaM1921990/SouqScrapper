@@ -22,11 +22,11 @@ def fetchScrapper(request):
 
     scapper = SouqUAEScrapper()
     scapper.startScrappingProcessing(
-            url='https://uae.souq.com/ae-en/women-rings/rings-284/women/swarovski%7Cmichael-kors%7Cvera-perla%7Cpandora%7Cemporio-armani%7Ckate-spade%7Caldo%7Ccalvin-klein-jewelry%7Cpierre-cardin%7Ccalvin-klein%7Cjuicy-couture/a-t-1780-7/s/?sortby=sr&page=1com/ae-en/women-rings/rings-284/women/swarovski%7Cmichael-kors%7Cvera-perla%7Cpandora%7Cemporio-armani/a-t-1780-7/s/',
+        url='https://fashion.souq.com/ae-en/search?campaign_id=3797&tag_id=4012&filters%5Bmanufacturer_en%5D%5B%5D=anne+klein&filters%5Bmanufacturer_en%5D%5B%5D=guess&filters%5Bmanufacturer_en%5D%5B%5D=casio&filters%5Bmanufacturer_en%5D%5B%5D=fossil&filters%5Bmanufacturer_en%5D%5B%5D=michael+kors&filters%5Bmanufacturer_en%5D%5B%5D=bebe&filters%5Bmanufacturer_en%5D%5B%5D=swarovski&filters%5Bmanufacturer_en%5D%5B%5D=marc+jacobs&filters%5Bmanufacturer_en%5D%5B%5D=calvin+klein%09&filters%5Bmanufacturer_en%5D%5B%5D=dkny&filters%5Bmanufacturer_en%5D%5B%5D=balmain&filters%5Bmanufacturer_en%5D%5B%5D=tissot&filters%5Bmanufacturer_en%5D%5B%5D=tommy+hilfiger&filters%5Bmanufacturer_en%5D%5B%5D=gucci&filters%5Bmanufacturer_en%5D%5B%5D=toywatch&filters%5Bmanufacturer_en%5D%5B%5D=kate+spade&filters%5Bmanufacturer_en%5D%5B%5D=seiko&filters%5Bmanufacturer_en%5D%5B%5D=marc+by+marc+jacobs&filters%5Bmanufacturer_en%5D%5B%5D=steve+madden&filters%5Bmanufacturer_en%5D%5B%5D=juicy+couture',
         collection='',
         subCollection='',
         tags="Middle East, Souq.com, Women's, Women's Jewellery, Women's Rings",
-        isFashion=False
+        isFashion=True
 
     )
 
