@@ -316,7 +316,7 @@ class SouqUAEScrapper():
         # Get Collection tags
         tags.append(product['collection'])
 
-        product['tags'] = tags + commonTags + self.getTagsFronsizes(product['variants'])
+        product['tags'] = tags  + self.getTagsFronsizes(product['variants'])
         # print product
         return product
 
