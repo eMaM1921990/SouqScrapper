@@ -18,7 +18,6 @@ from kombu import Queue
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -29,7 +28,6 @@ SECRET_KEY = 'wti=qbfbmn%4&ve89rp+rh()!cmi1df(op5na#@8fyw*#e+@j8'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -76,7 +74,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'SouqScrapper.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -99,12 +96,11 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'souq',
         'USER': 'postgres',
-        'PASSWORD':'postgres', #'admin1234',
+        'PASSWORD': 'admin1234',
         'HOST': 'localhost',  # '127.0.0.1'
         'PORT': '5432',  # '5556'
     }
 }
-
 
 # 'default': {
 #     'ENGINE': 'django.db.backends.mysql',
@@ -133,7 +129,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 # LOGGER
 # LOGGING
@@ -165,8 +160,6 @@ LOGGING = {
     }
 }
 
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
@@ -180,13 +173,11 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
-
 
 # SHOPIFY
 API_KEY = '9ff17ed2058b5f0e0bceb81663d6f2a8'
@@ -194,8 +185,6 @@ API_PASSWORD = 'f594faa989f974f342673d56acad4f8a'
 PRODUCT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products.json'
 PRODUCT_UPDATE_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products/{}.json'
 PRODUCT_VARIANT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/variants/{}.json'
-
-
 
 # CELERY
 BROKER_URL = 'amqp://guest:guest@localhost:5672//'
@@ -206,7 +195,6 @@ CELERY_TASK_SOFT_TIME_LIMIT = 60 * 60 * 24
 CELERY_ACKS_LATE = True
 CELERY_PREFETCH_MULTIPLIER = 100
 CELERY_MAX_TASKS_PER_CHILD = 100
-
 
 # celery worker -A ... -Q random-tasks --concurrency=4
 CELERY_IGNORE_RESULT = True

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+from wsgiref import headers
 
 import bs4
 from celery import shared_task
@@ -12,7 +13,7 @@ import string
 import json
 
 from models import Product
-from SouqScrapperApp.tagsLookUps import getPriceTags, getColorTags
+from SouqScrapperApp.tagsLookUps import getPriceTags, getColorTags, formatPrice
 import logging
 
 logger = logging.getLogger(__name__)
@@ -30,14 +31,20 @@ class SouqUAEScrapper():
         self.time_out = None
         self.time_wait = 5
         self.currency = 'AED'
+        self.headers = {
+            'Accept': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.84 Safari/537.36',
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+        self.product_url = 'https://uae.souq.com/ae-en/search_results.php?action=quickView&is_unit=false&id={}'
 
     # Open Http connection
-    def open_http_connection(self, call_url, page):
+    def open_http_connection(self, call_url, page, headers=None):
         try:
             # print('Begin: Call URL -- {} '.format(call_url))
             time.sleep(5)
             scraped_html_page = requests.get(call_url, timeout=self.time_out,
-                                             params=dict(page=page))
+                                             params=dict(page=page), headers=headers)
             # print('Finish: Call URL -- {} '.format(call_url))
             # Check response code
             if scraped_html_page.status_code == 200:
@@ -51,404 +58,148 @@ class SouqUAEScrapper():
         soup = BeautifulSoup(page, "html.parser")
         return soup
 
+    # Retrieve Total Page Number
+    def get_total_page(self, soup_page):
+        total_tag = soup_page.find('li', attrs={'class': 'total'})
+        if total_tag:
+            extracted_number = int(filter(str.isdigit, str(total_tag.text)))
+            return extracted_number
+        return 1
+
+    # Retrieve products
+    def get_products_ids_from_page(self, soup_page):
+        product_ids = []
+        product_item_card_tags = soup_page.find_all('div', attrs={'class': 'single-item'})
+        if product_item_card_tags:
+            # its souq now
+            for product_item in product_item_card_tags:
+                href_tag = product_item.find('a', attrs={'class': 'quickViewAction'})
+                if href_tag:
+                    data_tem_id = href_tag['data-id']
+                    if data_tem_id:
+                        product_ids.append(data_tem_id)
+
+        else:
+            products_item_card_tags = soup_page.find_all('div', attrs={'class': 'block-grid-large'})
+            if products_item_card_tags:
+                for product_item in products_item_card_tags:
+                    href_tag = product_item.find('a', attrs={'class': 'imgShowQuickView'})
+                    data_tem_id = href_tag['data-item_id']
+                    if data_tem_id:
+                        product_ids.append(data_tem_id)
+
+        return product_ids
+
+    def get_product_details(self, id):
+        page_html = self.open_http_connection(call_url=self.product_url.format(id), headers=self.headers, page=None)
+        if page_html:
+            product_json = json.loads(page_html)
+            return product_json
+        return None
+
     # Start Scrap
 
     def startScrappingProcessing(self, url, isFashion, collection, subCollection, tags):
         print('Begin: startScrappingProcessing -- {} '.format(url))
-        if not isFashion:
-            url += self.list_all_item_attribute
-        scrappedPage = self.open_http_connection(call_url=url, page=1)
-        if scrappedPage:
-            if not isFashion:
-                self.scrapSouqResults(page=scrappedPage, url=url, collection=collection,
-                                      subCollection=subCollection, tags=tags)
-            else:
-                self.scrapFashionResults(page=scrappedPage, url=url, collection=collection,
-                                         subCollection=subCollection, tags=tags)
+        url += self.list_all_item_attribute
+        page_html = self.open_http_connection(call_url=url, page=1)
+        if page_html:
+            self.scrap_souq_results(page_html=page_html, url=url, tags=tags)
 
         print('End: startScrappingProcessing -- {} '.format(url))
 
-    # Scrap Fashion page result
-    def scrapFashionResults(self, page, url, collection, subCollection, tags):
-        jsonData = json.loads(str(page))
-        totalPage = jsonData['metadata']['total_pages']
-        self.parseProductsList(jsonData['data'], None, collection, subCollection, tags, isFashion=True)
-        totalPage = 5
-        for page in range(2, totalPage, 1):
-            # print('Fashion page -- {}'.format(str(page)))
-            # url += self.list_all_item_attribute
-            scrappedPage = self.open_http_connection(call_url=url, page=page)
-            jsonData = json.loads(str(scrappedPage))
-            self.parseProductsList(jsonData['data'], None, collection, subCollection, tags, isFashion=True)
-
     # Scrap search page result
-    def scrapSouqResults(self, page, url, collection, subCollection, tags):
-        resultData = self.retrieveSearchAsJson(page=page)
-        commonTags = self.retrieveURLTags(page=page)
-        # Calc total Page result
-        totalPage = self.retrieveTotalPages(resultData['numberOfItems'])
-        # print('Find {} For {}  Pages for URL {} '.format(str(resultData['numberOfItems']),totalPage,url))
-        self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection, tags)
-        totalPage = 5
+    def scrap_souq_results(self, page_html, url, tags):
+        soap_page = self.parsePageSoap(page=page_html)
+        totalPage = self.get_total_page(soup_page=soap_page)
+        if totalPage > 5:
+            totalPage = 5
+
+        self.parse_products_list(soup_page=soap_page, tags=tags)
         for page in range(2, totalPage, 1):
-            # print('SOUQ page -- {}'.format(str(page)))
-            # url += self.list_all_item_attribute
-            scrappedPage = self.open_http_connection(call_url=url, page=page)
-            resultData = self.retrieveSearchAsJson(page=str(scrappedPage))
-            self.parseProductsList(resultData['itemListElement'], commonTags, collection, subCollection, tags)
+            page_html = self.open_http_connection(call_url=url, page=page)
+            soap_page = self.parsePageSoap(page=page_html)
+            self.parse_products_list(soup_page=soap_page, tags=tags)
 
-    def retrieveTotalPages(self, numberOfItems):
-        result = float(numberOfItems) / self.item_per_page
-        if not result.is_integer():
-            result = int(result) + 1
-        return int(result)
-
-    def retrieveURLTags(self, page):
-        soup = self.parsePageSoap(page=page)
-        ulTags = soup.find('ul', attrs={'class': 'refienments-selected'})
-        if ulTags:
-            ulTags = ulTags.contents
-        tags = []
-        for index, liTag in enumerate(ulTags):
-            if liTag.name == 'li':
-                tags.append(str(liTag.find('a')['data-name']))
-        if len(tags) > 0:
-            del tags[len(tags) - 1]
-        return tags
-
-    def retrieveSearchAsJson(self, page):
-        soup = self.parsePageSoap(page=page)
-        body = soup.find('script', attrs={'type': 'application/ld+json'}).text
-        resultData = json.loads(body)
-
-        return resultData
-
-    def parseProductsList(self, items, commonTags, collection, subCollection, tags, isFashion=False):
-        for item in items:
-            # print('scrap product {} '.format(str(item['name'])))
-            product = self.retrieveProductDetails(url=item['url'], commonTags=commonTags, collection=collection,
-                                                  subCollection=subCollection, otherTags=tags, isFashion=isFashion)
-
-            if product['brand'] != 'Other' or product['brand'] != 'other':
-                saved = self.saveProduct(product=product, isFashion=isFashion)
-                # print('product scrapped {}   statues {}'.format(item['name'],saved))
+    def parse_products_list(self, soup_page, tags):
+        product_ids = self.get_products_ids_from_page(soup_page=soup_page)
+        for id in product_ids:
+            product_json = self.get_product_details(id=id)
+            tags += self.get_product_price_tags(product_json)
+            tags += self.get_variants_tags(product_json)
+            tags += self.get_brand_tags(product_json)
+            product_json['tags'] = tags
+            product_json['specs'] = self.get_other_specs(product_json)
+            if product_json['manufacturer_en'] != 'Other' or product_json['manufacturer_en'] != 'other':
+                saved = self.saveProduct(product=product_json)
+                print('product scrapped {}   statues {}'.format(product_json['title'], saved))
                 if saved:
                     # Integration
                     shopifyIntegrationInstance = ShopifyIntegration()
                     if saved.shopify_id:
                         shopifyIntegrationInstance.removeShopifyProduct(id=saved.shopify_id)
 
-                    shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product, isFashion=isFashion)
+                    shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product_json)
                     if shopifyJson:
                         # update product
                         shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
 
-    def retrieveProductImageBySize(self, soup):
-        attr = []
-        images = soup.find_all(attrs={'class': 'slide'})
-        for imageTag in images:
-            if imageTag.has_attr('data-thumb'):
-                url = str(imageTag['data-thumb'])
-                attr.append(url)
+    def get_product_price_tags(self, product):
+        current_price = formatPrice(product['price']['current_price'])
+        old_price = formatPrice(product['price']['old_price'])
+        if current_price < old_price:
+            return getPriceTags(current_price)
+        return getPriceTags(old_price)
 
-        return attr
+    def get_variants_tags(self, product):
+        tags = []
+        if product['connections']:
+            for k, v in (product['connections']).iteritems():
+                for k1, v1 in (v['connectedValues']).iteritems():
+                    tags.append(getColorTags(str(v1['value'])))
+        return ','.join(tags)
 
-    def retrieveProductColors(self, soup):
-        attrArry = []
-        colors = soup.find(attrs={'class': 'colors-block'}).contents
-        for index, color in enumerate(colors):
-            if color.name == 'span' and color.has_attr('data-value'):
-                attrArry.append(str(color['data-value']))
-        return attrArry
+    def get_brand_tags(self, product):
+        tags = ''
+        if product['manufacturer_en']:
+            tags += ',{}'.format(str(product['manufacturer_en']))
+        if product['seller']['name']:
+            tags += ',{}'.format(str(product['seller']['name']))
+        return tags
 
-    def retrieveProductDescAndColor(self, soup, product):
-        body = soup.find('script', attrs={'type': 'application/ld+json'}).text
-        resultData = json.loads(body)
-        product['description'] = self.retrieveDescription(soup, resultData)
-        if resultData['color']:
-            product['color'] = str(resultData['color'])
-
-        brand = str(resultData['brand']['name']).translate(
-            string.maketrans("\n\t\r ", "    "))
-
-        product['brand'] = brand
-        # product['title'] = str(resultData['name']).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
-
-    def retrieveDescription(self, soup, productJson):
-
-        descriptionFullTag = soup.find('div', attrs={'id': 'description-full'})
-        descriptionShortTag = soup.find('div', attrs={'id': 'description-short'})
-        defaultDesc = str(productJson['description'].encode('utf-8').strip())
-
-        if descriptionFullTag:
-            desc = ''
-            descriptionFullTagList = descriptionFullTag.contents
-            for tag in descriptionFullTagList:
-                if type(tag) is not bs4.element.NavigableString:
-                    desc += str(tag)
-            return desc
-
-        elif descriptionShortTag:
-            desc = ''
-            descriptionShortTagList = descriptionShortTag.contents
-            for tag in descriptionShortTagList:
-                if type(tag) is not bs4.element.NavigableString:
-                    desc += str(tag)
-            return desc
-
-        return defaultDesc
-
-    def retrieveProductVariant(self, soup, product):
-        productExtra = soup.find_all('script', attrs={'type': 'text/javascript'})[5].text
-        productExtra = productExtra.replace('var globalBucket =', '')
-        productExtra = str(productExtra).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
-        resultData = json.loads(productExtra)
-        variants = resultData['Page_Data']['product']['variant']
-        quantity = resultData['Page_Data']['product']['quantity']
-        variantDict = {}
-        variantDict['quantity'] = quantity
-        if variants and len(variants) > 0:
-            for variant in str(variants).split(','):
-                keys = variant.split(":")
-                variantDict[keys[0]] = keys[1]
-
-        return variantDict
-
-    def getSizeQuantity(self, url, parsed_page):
-        if url:
-            page = self.open_http_connection(call_url=url, page=None)
-            parsed_page = self.parsePageSoap(page=page)
-
-        pageData = self.retrievePageData(parsed_page)
-        return pageData['product']['quantity']
-
-    def retrievePageData(self, page):
-        body = page.find_all('script', attrs={'type': 'text/javascript'})[5].text
-        body = body.replace('var globalBucket =', '')
-        body = str(body).translate(string.maketrans("\n\t\r ", "    ")).replace(' ', '')
-        resultData = json.loads(body)
-        return resultData['Page_Data']
-
-    def formatPrice(self, value):
-        value = value.replace(self.currency, "")
-        value = value.replace(",", '')
-        value = value.replace(' ', '')
-        value = float(value) * 0.272245
-        # value = '%.1f' % round(value, 1)
-        return value
-
-    def getTagsFronsizes(self, variant):
-        if variant:
-            sizeArr = []
-            for k, v in variant.iteritems():
-                if k != 'quantity':
-                    sizeArr.append(getColorTags(v))
-            return sizeArr
-
-    def retrieveProductDetails(self, url, commonTags, collection, subCollection, otherTags, isFashion=False):
-        product_page_result = self.open_http_connection(call_url=url, page=None)
-
-        if product_page_result:
-            if not isFashion:
-                return self.retrieveSouqProduct(product_page_result, commonTags, collection, subCollection, otherTags,
-                                                isFashion, url)
-            else:
-                return self.retrieveFashionProduct(product_page_result, commonTags, collection, subCollection,
-                                                   otherTags, isFashion, url)
-
-    def retrieveSouqProduct(self, product_page_result, commonTags, collection, subCollection, otherTags, isFashion,
-                            url):
-        product = {}
-        soup = self.parsePageSoap(page=product_page_result)
-        # Retrieve Page Data
-
-
-        pageData = self.retrievePageData(page=soup)
-
-        productTitleTag = soup.find(attrs={'class': 'product-title'})
-        product['title'] = str(productTitleTag.find('h1').text)
-
-        product['collection'] = collection if collection else ''
-        product['subCollection'] = subCollection if subCollection else ''
-        product['url'] = str(url)
-        product['images'] = self.retrieveProductImageBySize(soup)
-        product['isFashion'] = isFashion
-
-        # Price
-        price = self.formatPrice(str(pageData['product']['price']))
-        discountAmount = str(soup.find(attrs={'class': 'noWrap'}).text)
-        discountAmount = self.formatPrice(discountAmount)
-        compareAtPrice = float(price) + float(discountAmount)
-        product['discountAmount'] = discountAmount
-        product['compareAtPrice'] = compareAtPrice if discountAmount > 0  else None
-        product['price'] = price
-
-        # Get product color and description
-        self.retrieveProductDescAndColor(soup=soup, product=product)
-
-        # Crap Variant
-        product['variants'] = {}
-        product['variants'] = self.retrieveProductVariant(soup, product)
-
-        # Get other specs
-        specs = None
-        specsTag = soup.find('div', attrs={'id': 'specs-full'})
+    def get_other_specs(self, product):
+        page_html = self.open_http_connection(call_url=str(product['url']), page=None)
+        soap_page = self.parsePageSoap(page=page_html)
+        specsTag = soap_page.find('div', attrs={'id': 'specs-full'})
         if specsTag:
             specs = (specsTag.contents)[1]
         else:
-            specsTag = soup.find('div', attrs={'id': 'specs-short'})
+            specsTag = soap_page.find('div', attrs={'id': 'specs-short'})
             if specsTag:
                 specs = (specsTag.contents)[1]
-        product['specs'] = specs
+        return specs
 
-        # Tags
-        tags = []
-
-        # add other tags
-        if otherTags:
-            tags.append(otherTags)
-
-        # Get Product tags
-        tags.append(getPriceTags(price=compareAtPrice))
-
-        # Get Brand Tags
-        tags.append(product['brand'])
-        # Get Collection tags
-        tags.append(product['collection'])
-
-        product['tags'] = tags  + self.getTagsFronsizes(product['variants'])
-        # print product
-        return product
-
-    def retrieveFashionProduct(self, product_page_result, commonTags, collection, subCollection, otherTags, isFashion,
-                               url):
-        product = {}
-        soup = self.parsePageSoap(page=product_page_result)
-        productTitleTag = soup.find(attrs={'class': 'product-title'})
-        title = str(productTitleTag.find('h1').text)
-
-        compareAtPrice = str(soup.find(attrs={'class': 'price'}).text).translate(
-            string.maketrans("\n\t\r ", "    ")).replace(' ', '')
-        compareAtPrice = self.formatPrice(compareAtPrice)
-
-        discountAmount = str(soup.find(attrs={'class': 'noWrap'}).text)
-        discountAmount = self.formatPrice(discountAmount)
-
-        price = float(compareAtPrice) + float(discountAmount)
-
-        # Get product color and description
-        self.retrieveProductDescAndColor(soup=soup, product=product)
-
-        # Get other specs
-        product['specs'] = (soup.find('div', attrs={'id': 'specs-full'}).contents)[1]
-
-        product['title'] = title
-        product['discountAmount'] = discountAmount
-        product['compareAtPrice'] = compareAtPrice if discountAmount > 0  else 0
-        product['price'] = price
-
-        product['collection'] = collection if collection else ''
-        product['subCollection'] = subCollection if subCollection else ''
-        product['url'] = str(url)
-        product['images'] = self.retrieveProductImageBySize(soup)
-        product['isFashion'] = isFashion
-        product['variants'] = {}
-
-        variants = self.retrieveProductVariant(soup, product)
-        product['variants']['DialColor'] = variants['DialColor'] if 'DialColor' in variants else None
-        product['variants']['BandColor'] = variants['BandColor'] if 'BandColor' in variants else None
-        product['quantity'] = variants['quantity']
-
-        tags = []
-
-        # add other tags
-        if otherTags:
-            tags.append(otherTags)
-
-        # Get Product tags
-        tags.append(getPriceTags(price=compareAtPrice))
-        # Get Color Tags
-        if 'DialColor' in variants:
-            tags.append(getColorTags(tag=variants['DialColor']))
-        if 'BandColor' in variants:
-            tags.append(getColorTags(tag=variants['BandColor']))
-        # Get Brand Tags
-        tags.append(product['brand'])
-        # Get Collection tags
-        tags.append(product['collection'])
-
-        product['tags'] = tags
-        # print product
-        return product
-
-    def saveProduct(self, product, isFashion):
+    def saveProduct(self, product):
         try:
             record = Product()
-            if Product.objects.filter(title=product['title']).exists():
-                record = Product.objects.filter(title=product['title'])[0]
-            record.title = product['title']
-            record.sub_collection = product['subCollection']
-            record.collection = product['collection']
-            record.description = product['description']
-            record.compare_at_Price = product['compareAtPrice']
-            record.price = product['price']
-            record.discount_amount = product['discountAmount']
-            record.url = product['url']
-            if not isFashion:
-                record.color = None
-            else:
-                if product['variants']['DialColor'] and product['variants']['BandColor']:
-                    record.color = product['variants']['DialColor'] + ',' + product['variants']['BandColor']
-                else:
-                    record.color = None
-            try:
-                record.image_1 = product['images'][0]
-            except Exception as e:
-                record.image_1 = None
+            if Product.objects.filter(title=str(product['title'])).exists():
+                record = Product.objects.filter(title=str(product['title']))[0]
+            record.title = str(product['title'])
+            record.description = str(product['description'])
+            record.current_price = formatPrice(product['price']['current_price'])
+            record.old_price = formatPrice(product['price']['old_price'])
+            record.you_save = formatPrice(product['price']['you_save'])
+            record.url = str(product['url'])
+            record.images = str(product['images'])
+            if product['connections']:
+                record.connection_value = str(product['connections'])
 
-            try:
-                record.image_2 = product['images'][1]
-            except Exception as e:
-                record.image_2 = None
-
-            try:
-                record.image_3 = product['images'][2]
-            except Exception as e:
-                record.image_3 = None
-
-            try:
-                record.image_4 = product['images'][3]
-            except Exception as e:
-                record.image_4 = None
-
-            try:
-                record.image_5 = product['images'][5]
-            except Exception as e:
-                record.image_5 = None
-
-            if not isFashion:
-                try:
-                    record.variant_option_one = str(product['variants'].items()[0])
-                except Exception as e:
-                    print str(e)
-                    record.variant_option_one = None
-            else:
-                record.variant_option_one = product['variants']['DialColor'] if 'DialColor' in product[
-                    'variants'] else None
-
-            if not isFashion:
-                try:
-                    record.variant_option_two = str(product['variants'].items()[1])
-                except Exception as e:
-                    print str(e)
-                    record.variant_option_two = None
-            else:
-                record.variant_option_two = product['variants']['BandColor'] if 'BandColor' in product[
-                    'variants'] else None
-
-            record.brand = str(product['brand'])
-            record.tags = ','.join(product['tags'])
+            record.manufacturer_en = str(product['manufacturer_en'])
+            record.brand = str(product['manufacturer_en']) if product['manufacturer_en'] else str(
+                product['seller']['name'])
+            record.tags = product['tags']
             record.other_specs = str(product['specs'])
+            record.original_json = str(product)
             record.save()
             return record
         except Exception as e:

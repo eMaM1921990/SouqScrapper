@@ -22,10 +22,10 @@ def fetchScrapper(request):
 
     # scapper = SouqUAEScrapper()
     # scapper.startScrappingProcessing(
-    #     url='https://fashion.souq.com/ae-en/search?campaign_id=3797&tag_id=4012&filters%5Bmanufacturer_en%5D%5B%5D=anne+klein&filters%5Bmanufacturer_en%5D%5B%5D=guess&filters%5Bmanufacturer_en%5D%5B%5D=casio&filters%5Bmanufacturer_en%5D%5B%5D=fossil&filters%5Bmanufacturer_en%5D%5B%5D=michael+kors&filters%5Bmanufacturer_en%5D%5B%5D=bebe&filters%5Bmanufacturer_en%5D%5B%5D=swarovski&filters%5Bmanufacturer_en%5D%5B%5D=marc+jacobs&filters%5Bmanufacturer_en%5D%5B%5D=calvin+klein%09&filters%5Bmanufacturer_en%5D%5B%5D=dkny&filters%5Bmanufacturer_en%5D%5B%5D=balmain&filters%5Bmanufacturer_en%5D%5B%5D=tissot&filters%5Bmanufacturer_en%5D%5B%5D=tommy+hilfiger&filters%5Bmanufacturer_en%5D%5B%5D=gucci&filters%5Bmanufacturer_en%5D%5B%5D=toywatch&filters%5Bmanufacturer_en%5D%5B%5D=kate+spade&filters%5Bmanufacturer_en%5D%5B%5D=seiko&filters%5Bmanufacturer_en%5D%5B%5D=marc+by+marc+jacobs&filters%5Bmanufacturer_en%5D%5B%5D=steve+madden&filters%5Bmanufacturer_en%5D%5B%5D=juicy+couture',
+    #     url='https://fashion.souq.com/ae-en/watches-for-her/t/4012?q=eyJzIjoiYmVzdCIsImYiOnsibWFudWZhY3R1cmVyX2VuIjpbImFubmUga2xlaW4iLCJiYWxtYWluIiwiYmViZSIsImNhbHZpbiBrbGVpblx0IiwiY2FzaW8iLCJka255IiwiZm9zc2lsIiwiZ3VjY2kiLCJndWVzcyIsImp1aWN5IGNvdXR1cmUiLCJrYXRlIHNwYWRlIiwibWFyYyBieSBtYXJjIGphY29icyIsIm1hcmMgamFjb2JzIiwibWljaGFlbCBrb3JzIiwic2Vpa28iLCJzdGV2ZSBtYWRkZW4iLCJzd2Fyb3Zza2kiLCJ0aXNzb3QiLCJ0b21teSBoaWxmaWdlciIsInRveXdhdGNoIl19fQ%3D%3D',
     #     collection='',
     #     subCollection='',
-    #     tags="Middle East, Souq.com, Women's, Women's Jewellery, Women's Rings",
+    #     tags="UAE, Qatar, Bahrain, Oman, Kuwait, Saudi Arabia, Souq.com, Women's, Women's Jewellery, Women's Rings",
     #     isFashion=True
     #
     # )

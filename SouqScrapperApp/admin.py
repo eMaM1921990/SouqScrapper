@@ -7,33 +7,29 @@ from django.contrib import admin
 from import_export import resources
 from import_export.admin import ImportExportModelAdmin
 
-from SouqScrapperApp.models import Product,Stores
-
+from SouqScrapperApp.models import Product, Stores
 
 
 # Resources
 class ProductResource(resources.ModelResource):
-
     class Meta:
         model = Product
         skip_unchanged = True
 
 
 class StoreResource(resources.ModelResource):
-
     class Meta:
         model = Stores
         skip_unchanged = True
 
 
-
-
 class ProductAdmin(ImportExportModelAdmin):
-    list_display = ['id', 'collection', 'sub_collection', 'title', 'color',
-                    'brand']
+    list_display = ['id', 'title', 'old_price', 'current_price', 'you_save', 'brand',
+                                                                             'manufacturer_en']
 
     list_per_page = 10
-    search_fields = ('id', 'collection','sub_collection','color')
+    search_fields = ['id', 'title', 'old_price', 'current_price', 'you_save', 'brand'
+                                                                              ,'manufacturer_en']
 
     resource_class = ProductResource
 
@@ -57,4 +53,4 @@ class StoreAdmin(ImportExportModelAdmin):
 
 admin.site.register(Product, ProductAdmin)
 
-admin.site.register(Stores,StoreAdmin)
+admin.site.register(Stores, StoreAdmin)
