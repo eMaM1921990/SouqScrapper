@@ -125,11 +125,11 @@ class SouqUAEScrapper():
         product_ids = self.get_products_ids_from_page(soup_page=soup_page)
         for id in product_ids:
             product_json = self.get_product_details(id=id)
-            tags = ''
-            tags += self.get_product_price_tags(product_json)
-            tags += self.get_variants_tags(product_json)
-            tags += self.get_brand_tags(product_json)
-            product_json['tags'] = tags
+            tags_product = tags
+            tags_product += self.get_product_price_tags(product_json)
+            tags_product += self.get_variants_tags(product_json)
+            tags_product += self.get_brand_tags(product_json)
+            product_json['tags'] = tags_product
             product_json['specs'] = self.get_other_specs(product_json)
             if product_json['manufacturer_en'] != 'Other' or product_json['manufacturer_en'] != 'other':
                 saved = self.saveProduct(product=product_json)
