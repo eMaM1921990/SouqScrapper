@@ -22,7 +22,7 @@ def fetchScrapper(request):
 
     # scapper = SouqUAEScrapper()
     # scapper.startScrappingProcessing(
-    #     url='https://fashion.souq.com/ae-en/watches-for-her/t/4012?q=eyJzIjoiYmVzdCIsImYiOnsibWFudWZhY3R1cmVyX2VuIjpbImFubmUga2xlaW4iLCJiYWxtYWluIiwiYmViZSIsImNhbHZpbiBrbGVpblx0IiwiY2FzaW8iLCJka255IiwiZm9zc2lsIiwiZ3VjY2kiLCJndWVzcyIsImp1aWN5IGNvdXR1cmUiLCJrYXRlIHNwYWRlIiwibWFyYyBieSBtYXJjIGphY29icyIsIm1hcmMgamFjb2JzIiwibWljaGFlbCBrb3JzIiwic2Vpa28iLCJzdGV2ZSBtYWRkZW4iLCJzd2Fyb3Zza2kiLCJ0aXNzb3QiLCJ0b21teSBoaWxmaWdlciIsInRveXdhdGNoIl19fQ%3D%3D',
+    #     url='https://uae.souq.com/ae-en/tops/tops-488/women%7Cwomens/t--shirts/boohoo%7Cforever-21%7Carmani-jeans%7Cnike%7Cguess%7Cvero-moda%7Ckoovs%7Ckoton%7Cnew-look%7Cshein%7Cf--and--f%7Ctokyo-laundry%7Cpuma%7Csuperdry%7Cjuicy-couture%7Cmcq-by-alexander-mcqueen%7Cpepe-jeans%7Cthe-north-face%7Cgianfranco-ferre%7Cu.s.-polo-assn.%7Cmissguided%7Cfrench-connection%7Cpolice%7Chugo-boss%7Ctommy-hilfiger%7Cadidas-originals%7Clacoste%7Cmarie-claire/a-t-6356-6274-7/s/',
     #     collection='',
     #     subCollection='',
     #     tags="UAE, Qatar, Bahrain, Oman, Kuwait, Saudi Arabia, Souq.com, Women's, Women's Jewellery, Women's Rings",

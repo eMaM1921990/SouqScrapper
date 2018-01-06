@@ -24,9 +24,10 @@ class ShopifyIntegration():
         if product_dict['connections']:
             for k, v in (product_dict['connections']).iteritems():
                 option_dict = {'title': str(v['title'])}
+                option_dict['value'] = []
                 # Append options
                 for k1, v1 in (v['connectedValues']).iteritems():
-                    option_dict['value'] = []
+
                     option_dict['value'].append(v1['value'])
                 option_arr.append(option_dict)
 
@@ -45,7 +46,7 @@ class ShopifyIntegration():
 
         # Prepare variants
         variants = []
-        if shopify_option_arr:
+        if shopify_option_arr and len(shopify_option_arr)>0:
             option_1_arry = shopify_option_arr[0]
             try:
                 option_2_arry = shopify_option_arr[1]
@@ -129,20 +130,24 @@ class ShopifyIntegration():
         variants = []
         if option_2_array:
             for k,v in option_1_array.iteritems():
-                for k1,v1 in option_2_array.iteritems():
-                    if k == 'values' and k1 == 'values':
-                        variants.append({'option1':  v[0],
-                                         'option2':  v1[0],
-                                         'compare_at_price':formatPrice(product_dict['price']['current_price']),
-                                         'price':formatPrice(product_dict['price']['old_price']),
-                                         'inventory_quantity':str(product_dict['available_quantity']),
-                                         'inventory_management':"shopify"})
+                if k == 'values':
+                    for k1,v1 in option_2_array.iteritems():
+                        if k1 == 'values':
+                            for v_arr in v:
+                                for v1_arr in v1:
+                                    variants.append({'option1':  v_arr,
+                                                     'option2':  v1_arr,
+                                                     'price':formatPrice(product_dict['price']['current_price']),
+                                                     'compare_at_price':formatPrice(product_dict['price']['old_price']),
+                                                     'inventory_quantity':str(product_dict['available_quantity']),
+                                                     'inventory_management':"shopify"})
         else:
             for k,v in option_1_array.iteritems():
                 if k == 'values':
-                    variants.append({'option1': v[0],
-                                     'compare_at_price':formatPrice(product_dict['price']['current_price']),
-                                     'price':formatPrice(product_dict['price']['old_price']),
-                                     'inventory_quantity':str(product_dict['available_quantity']),
-                                     'inventory_management':"shopify"})
+                    for v_arr in v:
+                        variants.append({'option1': v,
+                                         'price':formatPrice(product_dict['price']['current_price']),
+                                         'compare_at_price':formatPrice(product_dict['price']['old_price']),
+                                         'inventory_quantity':str(product_dict['available_quantity']),
+                                         'inventory_management':"shopify"})
         return variants

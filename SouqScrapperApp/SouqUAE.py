@@ -163,7 +163,7 @@ class SouqUAEScrapper():
         tags = ''
         if product['manufacturer_en']:
             tags += ',{}'.format(str(product['manufacturer_en']))
-        if product['seller']['name']:
+        elif product['seller']['name']:
             tags += ',{}'.format(str(product['seller']['name']))
         return tags
 
