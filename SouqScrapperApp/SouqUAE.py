@@ -125,6 +125,7 @@ class SouqUAEScrapper():
         product_ids = self.get_products_ids_from_page(soup_page=soup_page)
         for id in product_ids:
             product_json = self.get_product_details(id=id)
+            tags = ''
             tags += self.get_product_price_tags(product_json)
             tags += self.get_variants_tags(product_json)
             tags += self.get_brand_tags(product_json)
