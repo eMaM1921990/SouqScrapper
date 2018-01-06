@@ -20,6 +20,7 @@ class ShopifyIntegration():
             imageArr.append({"src": image['xxlarge_url_picture']})
 
         # Options
+
         option_arr = []
         if product_dict['connections']:
             for k, v in (product_dict['connections']).iteritems():
@@ -145,7 +146,7 @@ class ShopifyIntegration():
             for k,v in option_1_array.iteritems():
                 if k == 'values':
                     for v_arr in v:
-                        variants.append({'option1': v,
+                        variants.append({'option1': v_arr,
                                          'price':formatPrice(product_dict['price']['current_price']),
                                          'compare_at_price':formatPrice(product_dict['price']['old_price']),
                                          'inventory_quantity':str(product_dict['available_quantity']),
