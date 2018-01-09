@@ -96,7 +96,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'souq',
         'USER': 'postgres',
-        'PASSWORD':'postgres', #'admin1234',
+        'PASSWORD':'admin1234',
         'HOST': 'localhost',  # '127.0.0.1'
         'PORT': '5432',  # '5556'
     }
@@ -185,6 +185,7 @@ API_PASSWORD = 'f594faa989f974f342673d56acad4f8a'
 PRODUCT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products.json'
 PRODUCT_UPDATE_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products/{}.json'
 PRODUCT_VARIANT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/variants/{}.json'
+PRODUCT_VARIANT_IMG_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products/{}/images.json'
 
 # CELERY
 BROKER_URL = 'amqp://guest:guest@localhost:5672//'

@@ -1,3 +1,7 @@
+import base64
+
+import requests
+
 __author__ = 'eMaM'
 
 
@@ -31,3 +35,7 @@ def formatPrice(value):
     value = float(value) * 0.272245
     # value = '%.1f' % round(value, 1)
     return value
+
+
+def get_as_base64(url):
+    return base64.b64encode(requests.get(url).content)

@@ -13,7 +13,7 @@ import string
 import json
 
 from models import Product
-from SouqScrapperApp.tagsLookUps import getPriceTags, getColorTags, formatPrice
+from SouqScrapperApp.utils import getPriceTags, getColorTags, formatPrice
 import logging
 
 logger = logging.getLogger(__name__)
