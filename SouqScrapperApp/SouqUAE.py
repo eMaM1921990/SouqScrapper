@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
+from threading import Lock
 from wsgiref import headers
 
 import bs4
@@ -135,6 +136,8 @@ class SouqUAEScrapper():
                 saved = self.saveProduct(product=product_json)
                 print('product scrapped {}   statues {}'.format(product_json['title'], saved))
                 if saved:
+                    lock = Lock()
+                    lock.acquire() # will block if lock is already held
                     # Integration
                     shopifyIntegrationInstance = ShopifyIntegration()
                     if saved.shopify_id:
@@ -144,6 +147,7 @@ class SouqUAEScrapper():
                     if shopifyJson:
                         # update product
                         shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
+                    lock.release()
 
     def get_product_price_tags(self, product):
         current_price = formatPrice(product['price']['current_price'])
