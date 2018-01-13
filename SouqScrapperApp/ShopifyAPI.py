@@ -111,7 +111,9 @@ class ShopifyIntegration():
             self.update_product_vairant_image(shopify_json=r.text,option_image_dict=option_image)
             return r.text
         except Exception as e:
+            print 'Error'
             print r.content
+            print 'End Error'
             return None
 
     def removeShopifyProduct(self, id):
