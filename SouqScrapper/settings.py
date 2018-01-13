@@ -96,7 +96,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'souq',
         'USER': 'postgres',
-        'PASSWORD':'admin1234',
+        'PASSWORD':'postgres',#'admin1234',
         'HOST': 'localhost',  # '127.0.0.1'
         'PORT': '5432',  # '5556'
     }

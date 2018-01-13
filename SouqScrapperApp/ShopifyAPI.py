@@ -1,5 +1,3 @@
-from threading import Lock
-
 import requests
 import time
 from django.conf import settings
@@ -32,12 +30,14 @@ class ShopifyIntegration():
                 option_dict['value'] = []
                 # Append options
                 for k1, v1 in (v['connectedValues']).iteritems():
+                    option_dict['value'].append(v1['value'])
                     if str(v['title']).lower() == 'color' or 'Color'.lower() in str(v['title']) :
-                        if v1['is_selected']:
-                            option_dict['value'].append(v1['value'])
+                        if str(v1['thumb']):
+                            option_image[str(v1['value'])]=str(v1['thumb'])
+                        else:
+                            option_image[str(v1['value'])]=imageArr[0]['src']
                     else:
-                        option_dict['value'].append(v1['value'])
-
+                        option_image['default']=imageArr[0]['src']
                 option_arr.append(option_dict)
 
         shopify_option_arr = []
@@ -93,29 +93,25 @@ class ShopifyIntegration():
         if variants and len(variants):
             data['product']['variants'] = variants
 
-        if imageArr and len(imageArr) > 0:
-            data['product']['clean'] = imageArr
+        if option_image and len(option_image)>0:
+            data['product']['clean'] = option_image
 
         return data
 
-    def addNewProduct(self, productDict):
+    def addNewProduct(self, productDict ):
         data = self.getShopifySouqProduct(product_dict=productDict)
         if 'clean' in data['product']:
-            option_image = data['product']['clean']
+            option_image =  data['product']['clean']
             del data['product']['clean']
         try:
             r = requests.post(url=self.end_point, data=json.dumps(data), headers={'Content-Type': 'application/json'})
             print productDict['title'] + 'shopfiy status code ' + str(r.status_code)
             # update variant Image
             # self.updateProductVarirant(r.text)
-
-
-            self.update_product_vairant_image(shopify_json=r.text, option_image_dict=option_image)
+            self.update_product_vairant_image(shopify_json=r.text,option_image_dict=option_image)
             return r.text
         except Exception as e:
-            print 'error'
             print r.content
-            print 'end error'
             return None
 
     def removeShopifyProduct(self, id):
@@ -146,24 +142,35 @@ class ShopifyIntegration():
             }
             r = requests.put(url=end_point_update, data=json.dumps(data), headers={'Content-Type': 'application/json'})
 
+
     def update_product_vairant_image(self, shopify_json, option_image_dict):
-        product = json.loads(str(shopify_json))['product']
+        product =json.loads(str(shopify_json))['product']
         variants = product['variants']
-        end_point_update = settings.PRODUCT_VARIANT_IMG_URL.format(settings.API_KEY, settings.API_PASSWORD,
-                                                                   product['id'])
-        variants_arr = []
+        end_point_update = settings.PRODUCT_VARIANT_IMG_URL.format(settings.API_KEY, settings.API_PASSWORD,product['id'])
+
         for variant in variants:
+            variants_arr =[]
+            image_url = None
+            if 'option1' in variant:
+                if variant['option1'] in option_image_dict:
+                    variants_arr.append(variant['id'])
+                    image_url = option_image_dict[variant['option1']]
 
-            variants_arr.append(variant['id'])
-
-        data = {
-            "image": {
-                "variant_ids": variants_arr,
-                "src": str(option_image_dict[0]['src'])
+            if 'option2' in variant:
+                if variant['option2'] in option_image_dict:
+                    variants_arr.append(variant['id'])
+                    image_url = option_image_dict[variant['option2']]
+            data = {
+                "image":{
+                    "variant_ids":variants_arr,
+                    "attachment":get_as_base64(image_url.replace('item_M','item_XXL'))
+                }
             }
-        }
-        time.sleep(10)
-        r = requests.post(url=end_point_update, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+            time.sleep(10)
+            r = requests.post(url=end_point_update, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+
+
+
 
     def generate_product_variants(self, option_1_array, option_2_array, product_dict):
         variants = []
@@ -180,11 +187,7 @@ class ShopifyIntegration():
                                                      'compare_at_price': formatPrice(
                                                          product_dict['price']['old_price']),
                                                      'inventory_quantity': str(product_dict['available_quantity']),
-                                                     'inventory_management': "shopify",
-                                                     "image": {
-                                                         "src": "https://scontent.faly1-1.fna.fbcdn.net/v/t1.0-9/26196353_1608108639234933_6671833467938132612_n.jpg?oh=419f3b7ce41b66de31bec7901add2774&oe=5AF22BF4"
-                                                     }
-                                                     })
+                                                     'inventory_management': "shopify"})
         else:
             for k, v in option_1_array.iteritems():
                 if k == 'values':
@@ -193,8 +196,5 @@ class ShopifyIntegration():
                                          'price': formatPrice(product_dict['price']['current_price']),
                                          'compare_at_price': formatPrice(product_dict['price']['old_price']),
                                          'inventory_quantity': str(product_dict['available_quantity']),
-                                         'inventory_management': "shopify",
-                                         "image": {
-                                             "src": "https://scontent.faly1-1.fna.fbcdn.net/v/t1.0-9/26196353_1608108639234933_6671833467938132612_n.jpg?oh=419f3b7ce41b66de31bec7901add2774&oe=5AF22BF4"
-                                         }})
+                                         'inventory_management': "shopify"})
         return variants

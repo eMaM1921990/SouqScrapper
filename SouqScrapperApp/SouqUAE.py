@@ -135,19 +135,16 @@ class SouqUAEScrapper():
             if product_json['manufacturer_en'] != 'Other' or product_json['manufacturer_en'] != 'other':
                 saved = self.saveProduct(product=product_json)
                 print('product scrapped {}   statues {}'.format(product_json['title'], saved))
-                if saved:
-                    lock = Lock()
-                    lock.acquire() # will block if lock is already held
-                    # Integration
-                    shopifyIntegrationInstance = ShopifyIntegration()
-                    if saved.shopify_id:
-                        shopifyIntegrationInstance.removeShopifyProduct(id=saved.shopify_id)
-
-                    shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product_json)
-                    if shopifyJson:
-                        # update product
-                        shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
-                    lock.release()
+                # if saved:
+                #     # Integration
+                #     shopifyIntegrationInstance = ShopifyIntegration()
+                #     if saved.shopify_id:
+                #         shopifyIntegrationInstance.removeShopifyProduct(id=saved.shopify_id)
+                #
+                #     shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product_json)
+                #     if shopifyJson:
+                #         # update product
+                #         shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
 
     def get_product_price_tags(self, product):
         current_price = formatPrice(product['price']['current_price'])
@@ -204,7 +201,7 @@ class SouqUAEScrapper():
                 product['seller']['name'])
             record.tags = product['tags']
             record.other_specs = str(product['specs'])
-            record.original_json = str(product)
+            record.original_json = product
             record.save()
             return record
         except Exception as e:
