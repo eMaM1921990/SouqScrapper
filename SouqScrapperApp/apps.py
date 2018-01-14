@@ -7,5 +7,5 @@ from django.apps import AppConfig
 class SouqscrapperappConfig(AppConfig):
     name = 'SouqScrapperApp'
 
-    def ready(self):
-        import Signals
+    # def ready(self):
+    #     import Signals

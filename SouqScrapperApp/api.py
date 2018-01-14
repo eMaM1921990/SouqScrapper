@@ -14,12 +14,13 @@ def fetchScrapper(request):
     resp = {}
     resp['status'] = False
     querySet = Stores.objects.filter(store='Souq')
+    task_list = []
+    for record in querySet[:1]:
+        task_list.append(scrap.delay(url=record.url, collection='',subCollection='',isFashion=record.is_fashion, tags=record.tags))
+        task_list.append(task_test.delay(10))
+        # time.sleep(1500)
 
-    for record in querySet:
-        scrap.delay(url=record.url, collection='',
-                    subCollection='',
-                    isFashion=record.is_fashion, tags=record.tags)
-        time.sleep(1500)
+    check_task_status.delay(task_list)
 
     # scapper = SouqUAEScrapper()
     # scapper.startScrappingProcessing(

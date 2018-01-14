@@ -1,1 +1,1 @@
-default_app_config = 'SouqScrapperApp.apps.SouqscrapperappConfig'
+# default_app_config = 'SouqScrapperApp.apps.SouqscrapperappConfig'
