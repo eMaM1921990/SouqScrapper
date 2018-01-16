@@ -25,9 +25,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'wti=qbfbmn%4&ve89rp+rh()!cmi1df(op5na#@8fyw*#e+@j8'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'SouqScrapperApp',
     'rest_framework',
     'import_export',
+    'django_celery_results',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -96,7 +97,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'souq',
         'USER': 'postgres',
-        'PASSWORD':'admin1234',
+        'PASSWORD':'postgres',#'admin1234',
         'HOST': 'localhost',  # '127.0.0.1'
         'PORT': '5432',  # '5556'
     }
@@ -196,9 +197,9 @@ CELERY_TASK_SOFT_TIME_LIMIT = 60 * 60 * 24
 CELERY_ACKS_LATE = True
 CELERY_PREFETCH_MULTIPLIER = 100
 CELERY_MAX_TASKS_PER_CHILD = 100
-
+CELERY_RESULT_BACKEND = 'django-db'
 # celery worker -A ... -Q random-tasks --concurrency=4
-CELERY_IGNORE_RESULT = True
+# CELERY_IGNORE_RESULT = True
 # CELERY_QUEUES = (
 #     # Queue('default', Exchange('default'), routing_key='default'),
 #     Queue('scrapFirstQuarter', Exchange('scrapFirstQuarter'), routing_key='scrapFirstQuarter'),

@@ -12,9 +12,10 @@ import time
 from bs4 import BeautifulSoup
 import string
 import json
+import ast
 
 from models import Product
-from SouqScrapperApp.utils import getPriceTags, getColorTags, formatPrice
+from SouqScrapperApp.utils import getPriceTags, getColorTags, formatPrice, convert
 import logging
 
 logger = logging.getLogger(__name__)
@@ -115,7 +116,8 @@ class SouqUAEScrapper():
         totalPage = self.get_total_page(soup_page=soap_page)
         if totalPage > 5:
             totalPage = 5
-
+        # TODO just for testing
+        totalPage = 1
         self.parse_products_list(soup_page=soap_page, tags=tags)
         for page in range(2, totalPage, 1):
             page_html = self.open_http_connection(call_url=url, page=page)
@@ -126,12 +128,13 @@ class SouqUAEScrapper():
         product_ids = self.get_products_ids_from_page(soup_page=soup_page)
         for id in product_ids:
             product_json = self.get_product_details(id=id)
+            product_json = convert(product_json)
             tags_product = tags
             tags_product += self.get_product_price_tags(product_json)
             tags_product += self.get_variants_tags(product_json)
             tags_product += self.get_brand_tags(product_json)
-            product_json['tags'] = tags_product
-            product_json['specs'] = self.get_other_specs(product_json)
+            product_json['tags'] = str(tags_product)
+            product_json['specs'] = str(self.get_other_specs(product_json))
             if product_json['manufacturer_en'] != 'Other' or product_json['manufacturer_en'] != 'other':
                 saved = self.saveProduct(product=product_json)
                 print('product scrapped {}   statues {}'.format(product_json['title'], saved))
@@ -188,11 +191,11 @@ class SouqUAEScrapper():
                 record = Product.objects.filter(title=str(product['title']))[0]
             record.title = str(product['title'])
             record.description = str(product['description'])
-            record.current_price = formatPrice(product['price']['current_price'])
-            record.old_price = formatPrice(product['price']['old_price'])
-            record.you_save = formatPrice(product['price']['you_save'])
+            record.current_price = formatPrice(product['price']['current_price'] if 'current_price' in product['price'] else 0)
+            record.old_price = formatPrice(product['price']['old_price'] if 'old_price' in product['price'] else 0)
+            record.you_save = formatPrice(product['price']['you_save'] if 'you_save' in product['price'] else 0)
             record.url = str(product['url'])
-            record.images = str(product['images'])
+            record.images = product['images']
             if product['connections']:
                 record.connection_value = str(product['connections'])
 
@@ -201,7 +204,8 @@ class SouqUAEScrapper():
                 product['seller']['name'])
             record.tags = product['tags']
             record.other_specs = str(product['specs'])
-            record.original_json = product
+            record.original_json = json.dumps(product, ensure_ascii=False)
+
             record.save()
             return record
         except Exception as e:

@@ -5,6 +5,7 @@ from celery import shared_task
 from SouqScrapperApp.ShopifyAPI import ShopifyIntegration
 from SouqScrapperApp.SouqUAE import SouqUAEScrapper
 from SouqScrapperApp.models import Product
+import json
 
 
 def ServiceTemporarilyDownError(object):
@@ -29,41 +30,38 @@ def scrap(url, collection, subCollection, tags, isFashion):
 
 
 @shared_task(max_retries=10)
-def push_products(input):
-        product_query_set = Product.objects.all()
-        shopifyIntegrationInstance = ShopifyIntegration()
-        for product_row in product_query_set:
-            try:
-                if product_row.shopify_id:
-                    shopifyIntegrationInstance.removeShopifyProduct(id=product_row.shopify_id)
+def push_products(result):
+    print 'inside push product'
+    product_query_set = Product.objects.all()
+    shopifyIntegrationInstance = ShopifyIntegration()
+    for product_row in product_query_set:
+        print product_row
+        if product_row.shopify_id:
+            shopifyIntegrationInstance.removeShopifyProduct(id=product_row.shopify_id)
+        #
+        product_dict = json.loads(product_row.original_json)
 
-                shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product_row.original_json)
-                if shopifyJson:
-                    # update product
-                    shopifyIntegrationInstance.updateProduct(product=product_row, shopifyJson=shopifyJson)
+        shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product_dict)
+        if shopifyJson:
+            # update product
+            shopifyIntegrationInstance.updateProduct(product=product_row, shopifyJson=shopifyJson)
 
-            except Exception as e:
-                print str(e)
-
-
-@shared_task(max_retries=10)
-def check_task_status(tasks):
-    completed_tasks = []
-    for task in tasks:
-        if task.ready():
-            completed_tasks.append(task)
-
-    # remove completed tasks
-    tasks = list(set(tasks) - set(completed_tasks))
-    if len(tasks) > 0:
-        check_task_status.delay(tasks)
-
-    else:
-        print 'check_status_'
-        # push_products.delay()
+    return 'done'
 
 
+@shared_task
+def task_one(param, pram):
+    print 'test one'
+    return param + pram
 
-@shared_task(max_retries=10)
-def task_test(param):
-    return 10
+
+@shared_task
+def task_two():
+    print 'test two'
+    return 20
+
+
+@shared_task
+def task_three():
+    print 'task thee'
+    return 100

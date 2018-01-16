@@ -1,4 +1,5 @@
 import base64
+import collections
 
 import requests
 
@@ -29,9 +30,10 @@ def getPriceTags(price):
 
 
 def formatPrice(value):
-    value = value.replace("AED", "")
-    value = value.replace(",", '')
-    value = value.replace(' ', '')
+    if type(value) == str:
+        value = value.replace("AED", "")
+        value = value.replace(",", '')
+        value = value.replace(' ', '')
     value = float(value) * 0.272245
     # value = '%.1f' % round(value, 1)
     return value
@@ -39,3 +41,15 @@ def formatPrice(value):
 
 def get_as_base64(url):
     return base64.b64encode(requests.get(url).content)
+
+
+
+def convert(data):
+    if isinstance(data, basestring):
+        return str(data)
+    elif isinstance(data, collections.Mapping):
+        return dict(map(convert, data.iteritems()))
+    elif isinstance(data, collections.Iterable):
+        return type(data)(map(convert, data))
+    else:
+        return data

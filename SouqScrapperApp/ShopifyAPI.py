@@ -4,7 +4,7 @@ from django.conf import settings
 import json
 
 from SouqScrapperApp.models import Product
-from SouqScrapperApp.utils import formatPrice, get_as_base64
+from SouqScrapperApp.utils import formatPrice, get_as_base64, convert
 
 __author__ = 'eMaM'
 
@@ -31,7 +31,7 @@ class ShopifyIntegration():
                 # Append options
                 for k1, v1 in (v['connectedValues']).iteritems():
                     option_dict['value'].append(v1['value'])
-                    if str(v['title']).lower() == 'color' or 'Color'.lower() in str(v['title']) :
+                    if str(v['title']).lower() == 'color' or 'color' in str(v['title']).lower() :
                         if str(v1['thumb']):
                             option_image[str(v1['value'])]=str(v1['thumb'])
                         else:
@@ -93,8 +93,8 @@ class ShopifyIntegration():
         if variants and len(variants):
             data['product']['variants'] = variants
 
-        if option_image and len(option_image)>0:
-            data['product']['clean'] = option_image
+        # /if option_image and len(option_image)>0:
+        data['product']['clean'] = option_image
 
         return data
 
@@ -111,6 +111,7 @@ class ShopifyIntegration():
             self.update_product_vairant_image(shopify_json=r.text,option_image_dict=option_image)
             return r.text
         except Exception as e:
+            print str(e)
             print 'Error'
             print r.content
             print 'End Error'
@@ -185,9 +186,9 @@ class ShopifyIntegration():
                                 for v1_arr in v1:
                                     variants.append({'option1': v_arr,
                                                      'option2': v1_arr,
-                                                     'price': formatPrice(product_dict['price']['current_price']),
+                                                     'price': formatPrice(convert(product_dict['price']['current_price'])),
                                                      'compare_at_price': formatPrice(
-                                                         product_dict['price']['old_price']),
+                                                         convert(product_dict['price']['old_price'])),
                                                      'inventory_quantity': str(product_dict['available_quantity']),
                                                      'inventory_management': "shopify"})
         else:
@@ -195,8 +196,8 @@ class ShopifyIntegration():
                 if k == 'values':
                     for v_arr in v:
                         variants.append({'option1': v_arr,
-                                         'price': formatPrice(product_dict['price']['current_price']),
-                                         'compare_at_price': formatPrice(product_dict['price']['old_price']),
+                                         'price': formatPrice(convert(product_dict['price']['current_price'])),
+                                         'compare_at_price': formatPrice(convert(product_dict['price']['old_price'])),
                                          'inventory_quantity': str(product_dict['available_quantity']),
                                          'inventory_management': "shopify"})
         return variants
