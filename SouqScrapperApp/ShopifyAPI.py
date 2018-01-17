@@ -30,13 +30,16 @@ class ShopifyIntegration():
                 option_dict['value'] = []
                 # Append options
                 for k1, v1 in (v['connectedValues']).iteritems():
-                    option_dict['value'].append(v1['value'])
-                    if str(v['title']).lower() == 'color' or 'color' in str(v['title']).lower() :
-                        if str(v1['thumb']):
-                            option_image[str(v1['value'])]=str(v1['thumb'])
-                        else:
-                            option_image[str(v1['value'])]=imageArr[0]['src']
+
+                    if str(v['title']).lower() == 'color' or 'color' in str(v['title']).lower():
+                        if v1['is_selected']:
+                            option_dict['value'].append(v1['value'])
+                            if str(v1['thumb']):
+                                option_image[str(v1['value'])]=str(v1['thumb'])
+                            else:
+                                option_image[str(v1['value'])]=imageArr[0]['src']
                     else:
+                        option_dict['value'].append(v1['value'])
                         option_image['default']=imageArr[0]['src']
                 option_arr.append(option_dict)
 
@@ -108,13 +111,10 @@ class ShopifyIntegration():
             print productDict['title'] + 'shopfiy status code ' + str(r.status_code)
             # update variant Image
             # self.updateProductVarirant(r.text)
-            self.update_product_vairant_image(shopify_json=r.text,option_image_dict=option_image)
+            self.update_product_vairant_image(shopify_json=r.text,option_image_dict=option_image,product_dict=data)
             return r.text
         except Exception as e:
             print str(e)
-            print 'Error'
-            print r.content
-            print 'End Error'
             return None
 
     def removeShopifyProduct(self, id):
@@ -146,31 +146,31 @@ class ShopifyIntegration():
             r = requests.put(url=end_point_update, data=json.dumps(data), headers={'Content-Type': 'application/json'})
 
 
-    def update_product_vairant_image(self, shopify_json, option_image_dict):
+    def update_product_vairant_image(self, shopify_json, option_image_dict,product_dict):
         product =json.loads(str(shopify_json))['product']
         variants = product['variants']
         end_point_update = settings.PRODUCT_VARIANT_IMG_URL.format(settings.API_KEY, settings.API_PASSWORD,product['id'])
-
+        variants_arr =[]
         for variant in variants:
-            variants_arr =[]
-            image_url = None
-            if 'option1' in variant:
-                if variant['option1'] in option_image_dict:
-                    variants_arr.append(variant['id'])
-                    image_url = option_image_dict[variant['option1']]
-
-            if 'option2' in variant:
-                if variant['option2'] in option_image_dict:
-                    variants_arr.append(variant['id'])
-                    image_url = option_image_dict[variant['option2']]
-            data = {
-                "image":{
-                    "variant_ids":variants_arr,
-                    "attachment":get_as_base64(image_url.replace('item_M','item_XXL'))
-                }
+            variants_arr.append(variant['id'])
+            # image_url = None
+            # if 'option1' in variant:
+            #     if variant['option1'] in option_image_dict:
+            #         variants_arr.append(variant['id'])
+            #         image_url = option_image_dict[variant['option1']]
+            #
+            # if 'option2' in variant:
+            #     if variant['option2'] in option_image_dict:
+            #         variants_arr.append(variant['id'])
+            #         image_url = option_image_dict[variant['option2']]
+        data = {
+            "image":{
+                "variant_ids":variants_arr,
+                "src":str(product_dict['product']['images'][0]['src'])
             }
-            time.sleep(10)
-            r = requests.post(url=end_point_update, data=json.dumps(data), headers={'Content-Type': 'application/json'})
+        }
+        time.sleep(1)
+        r = requests.post(url=end_point_update, data=json.dumps(data), headers={'Content-Type': 'application/json'})
 
 
 

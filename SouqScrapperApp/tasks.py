@@ -29,7 +29,7 @@ def scrap(url, collection, subCollection, tags, isFashion):
         raise scrap.retry()
 
 
-@shared_task(max_retries=10)
+# @shared_task(max_retries=10)
 def push_products(result):
     print 'inside push product'
     product_query_set = Product.objects.all()

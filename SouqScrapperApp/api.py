@@ -18,19 +18,19 @@ def fetchScrapper(request):
 
 
     querySet = Stores.objects.filter(store='Souq')
-    # scapper = SouqUAEScrapper()
+    scapper = SouqUAEScrapper()
     for record in querySet:
-            scrap.delay(url=record.url, collection='', subCollection='', isFashion=record.is_fashion, tags=record.tags)
+            # scrap.delay(url=record.url, collection='', subCollection='', isFashion=record.is_fashion, tags=record.tags)
 
 
-        # scapper.startScrappingProcessing(
-        #     url=record.url,
-        #     collection='',
-        #     subCollection='',
-        #     tags="UAE, Qatar, Bahrain, Oman, Kuwait, Saudi Arabia, Souq.com, Women's, Women's Jewellery, Women's Rings",
-        #     isFashion=True
-        #
-        # )
+        scapper.startScrappingProcessing(
+            url=record.url,
+            collection='',
+            subCollection='',
+            tags="UAE, Qatar, Bahrain, Oman, Kuwait, Saudi Arabia, Souq.com, Women's, Women's Jewellery, Women's Rings",
+            isFashion=True
+
+        )
 
 
     resp['status'] = True
@@ -48,7 +48,7 @@ def fetchScrapper(request):
 def push_to_shopify(request):
     resp = {}
     resp['status'] = False
-    push_products.delay('Data')
+    push_products('test')
     resp['status'] = True
     resp['desc'] = "Shopify will be update once this process done"
     return Response(resp)
