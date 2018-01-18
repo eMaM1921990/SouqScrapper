@@ -135,19 +135,19 @@ class SouqUAEScrapper():
             tags_product += self.get_brand_tags(product_json)
             product_json['tags'] = str(tags_product)
             product_json['specs'] = str(self.get_other_specs(product_json))
-            if product_json['manufacturer_en'] != 'Other' or product_json['manufacturer_en'] != 'other':
+            if product_json['manufacturer_en'].lower() != 'other' and product_json['seller']['name'].lower() != 'other':
                 saved = self.saveProduct(product=product_json)
                 print('product scrapped {}   statues {}'.format(product_json['title'], saved))
-                # if saved:
-                #     # Integration
-                #     shopifyIntegrationInstance = ShopifyIntegration()
-                #     if saved.shopify_id:
-                #         shopifyIntegrationInstance.removeShopifyProduct(id=saved.shopify_id)
-                #
-                #     shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product_json)
-                #     if shopifyJson:
-                #         # update product
-                #         shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
+                if saved:
+                    # Integration
+                    shopifyIntegrationInstance = ShopifyIntegration()
+                    if saved.shopify_id:
+                        shopifyIntegrationInstance.removeShopifyProduct(id=saved.shopify_id)
+
+                    shopifyJson = shopifyIntegrationInstance.addNewProduct(productDict=product_json)
+                    if shopifyJson:
+                        # update product
+                        shopifyIntegrationInstance.updateProduct(product=saved, shopifyJson=shopifyJson)
 
     def get_product_price_tags(self, product):
         current_price = formatPrice(product['price']['current_price'])
@@ -191,7 +191,8 @@ class SouqUAEScrapper():
                 record = Product.objects.filter(title=str(product['title']))[0]
             record.title = str(product['title'])
             record.description = str(product['description'])
-            record.current_price = formatPrice(product['price']['current_price'] if 'current_price' in product['price'] else 0)
+            record.current_price = formatPrice(
+                product['price']['current_price'] if 'current_price' in product['price'] else 0)
             record.old_price = formatPrice(product['price']['old_price'] if 'old_price' in product['price'] else 0)
             record.you_save = formatPrice(product['price']['you_save'] if 'you_save' in product['price'] else 0)
             record.url = str(product['url'])

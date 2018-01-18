@@ -111,7 +111,7 @@ class ShopifyIntegration():
             print productDict['title'] + 'shopfiy status code ' + str(r.status_code)
             # update variant Image
             # self.updateProductVarirant(r.text)
-            self.update_product_vairant_image(shopify_json=r.text,option_image_dict=option_image,product_dict=data)
+            # self.update_product_vairant_image(shopify_json=r.text,option_image_dict=option_image,product_dict=data)
             return r.text
         except Exception as e:
             print str(e)
