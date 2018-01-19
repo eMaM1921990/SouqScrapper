@@ -135,7 +135,9 @@ class SouqUAEScrapper():
             tags_product += self.get_brand_tags(product_json)
             product_json['tags'] = str(tags_product)
             product_json['specs'] = str(self.get_other_specs(product_json))
-            if product_json['manufacturer_en'].lower() != 'other' and product_json['seller']['name'].lower() != 'other':
+
+            brand_exclude = str(product_json['manufacturer_en']) if product_json['manufacturer_en'] else str(product_json['seller']['name'])
+            if brand_exclude and brand_exclude.lower() != 'other':
                 saved = self.saveProduct(product=product_json)
                 print('product scrapped {}   statues {}'.format(product_json['title'], saved))
                 if saved:

@@ -21,6 +21,7 @@ from SouqScrapperApp import api
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/scrapSouq/$',api.fetchScrapper, name='fetchScrapper'),
+    url(r'^api/v1/scrapSouqMissed/(?P<id>.*)/$',api.fetchScrapperMissed, name='fetchScrapperMissed'),
     url(r'^api/v1/push_souq/$',api.push_to_shopify, name='push_to_shopify'),
 
 ]

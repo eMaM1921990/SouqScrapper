@@ -15,31 +15,36 @@ __author__ = 'eMaM'
 def fetchScrapper(request):
     resp = {}
     resp['status'] = False
-
-
     querySet = Stores.objects.filter(store='Souq')
-    scapper = SouqUAEScrapper()
+    # scapper = SouqUAEScrapper()
     for record in querySet:
-            # scrap.delay(url=record.url, collection='', subCollection='', isFashion=record.is_fashion, tags=record.tags)
+            scrap.delay(url=record.url, collection='', subCollection='', isFashion=record.is_fashion, tags=record.tags)
 
-
-        scapper.startScrappingProcessing(
-            url=record.url,
-            collection='',
-            subCollection='',
-            tags="UAE, Qatar, Bahrain, Oman, Kuwait, Saudi Arabia, Souq.com, Women's, Women's Jewellery, Women's Rings",
-            isFashion=True
-
-        )
-
+    # scapper.startScrappingProcessing(
+    #     url='https://uae.souq.com/ae-en/swimwear/swimwear-487/men/swim-trunk/hugo-boss%7Cjack---and---jones%7Cf--and--f%7Cforever-21%7Clacoste%7Cnautica%7Carena%7Cdiesel%7Csuperdry/a-t-6356-6435-7/s/',
+    #     collection='',
+    #     subCollection='',
+    #     tags="UAE, Qatar, Bahrain, Oman, Kuwait, Saudi Arabia, Souq.com, Women's, Women's Jewellery, Women's Rings",
+    #     isFashion=True
+    #
+    # )
 
     resp['status'] = True
     resp['desc'] = "Shopify will be update once this process done"
-
-
     return Response(resp)
 
 
+
+@never_cache
+@api_view(['GET'])
+def fetchScrapperMissed(request,id):
+    resp = {}
+    resp['status'] = False
+    record = Stores.objects.get(id=id)
+    scrap.delay(url=record.url, collection='', subCollection='', isFashion=record.is_fashion, tags=record.tags)
+    resp['status'] = True
+    resp['desc'] = "Shopify will be update once this process done"
+    return Response(resp)
 
 
 

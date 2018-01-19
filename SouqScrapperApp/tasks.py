@@ -32,7 +32,7 @@ def scrap(url, collection, subCollection, tags, isFashion):
 # @shared_task(max_retries=10)
 def push_products(result):
     print 'inside push product'
-    product_query_set = Product.objects.all()
+    product_query_set = Product.objects.filter(shopify_id__null=True)
     shopifyIntegrationInstance = ShopifyIntegration()
     for product_row in product_query_set:
         print product_row
