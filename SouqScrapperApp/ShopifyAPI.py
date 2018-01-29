@@ -101,6 +101,29 @@ class ShopifyIntegration():
 
         return data
 
+
+    # new structure for other scrappers
+    def add_product_to_shopify(self, products):
+        try:
+            r = requests.post(url=self.end_point, data=json.dumps(products), headers={'Content-Type': 'application/json'})
+            print products['product']['title'] + ' shopfiy status code ' + str(r.status_code)
+            return r.text
+        except Exception as e:
+            print 'Error during push product to shopify cause {} , shopify response {}'.format(str(e),r.text)
+            return None
+
+    def update_product_at_shopify(self, product, id):
+        try:
+            endpoint  = settings.PRODUCT_UPDATE_URL.format(settings.API_KEY, settings.API_PASSWORD,id)
+            r = requests.put(url=endpoint, data=json.dumps(product), headers={'Content-Type': 'application/json'})
+            print product['product']['title'] + 'update shopfiy status code ' + str(r.status_code)
+            return r.text
+        except Exception as e:
+            print 'Error during update product to shopify cause {} , shopify response {}'.format(str(e),r.text)
+            return None
+
+
+
     def addNewProduct(self, productDict ):
         data = self.getShopifySouqProduct(product_dict=productDict)
         if 'clean' in data['product']:

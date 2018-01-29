@@ -181,12 +181,12 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, '/static/')
 
 # SHOPIFY
-API_KEY = '9ff17ed2058b5f0e0bceb81663d6f2a8'
-API_PASSWORD = 'f594faa989f974f342673d56acad4f8a'
-PRODUCT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products.json'
-PRODUCT_UPDATE_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products/{}.json'
-PRODUCT_VARIANT_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/variants/{}.json'
-PRODUCT_VARIANT_IMG_URL = 'https://{}:{}@mystyl-co.myshopify.com/admin/products/{}/images.json'
+API_KEY = '4eae981972258f09c40a69881ec30d87'
+API_PASSWORD = '5510e9a0833c5cc3f2ef54093c0a1e95'
+PRODUCT_URL = 'https://{}:{}@ounass-scrap.myshopify.com/admin/products.json'
+PRODUCT_UPDATE_URL = 'https://{}:{}@ounass-scrap.myshopify.com/admin/products/#{}.json'
+PRODUCT_VARIANT_URL = 'https://{}:{}@ounass-scrap.myshopify.com/admin/variants/{}.json'
+PRODUCT_VARIANT_IMG_URL = 'https://{}:{}@ounass-scrap.myshopify.com/admin/products/{}/images.json'
 
 # CELERY
 BROKER_URL = 'amqp://guest:guest@localhost:5672//'

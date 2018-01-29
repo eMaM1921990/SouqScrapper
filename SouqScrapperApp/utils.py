@@ -2,6 +2,7 @@ import base64
 import collections
 
 import requests
+import stringcase
 
 __author__ = 'eMaM'
 
@@ -9,6 +10,10 @@ __author__ = 'eMaM'
 def getColorTags(tag):
     if tag == 'Multi Color':
         return 'Multi-Coloured'
+
+    if tag == 'MultiColor':
+        return 'MultiColoured'
+
     if tag == 'Optic White':
         return 'White'
     return tag
@@ -25,8 +30,10 @@ def getPriceTags(price):
 
     if price >= 250 and price < 500:
         return ',$250-$500,'
-    if price > 500:
-        return ',$500+,'
+    if price >= 500 and price < 1000:
+        return ',$500-$1000,'
+    if price > 1000:
+        return ',Above $1000,'
 
 
 def formatPrice(value):
@@ -53,3 +60,15 @@ def convert(data):
         return type(data)(map(convert, data))
     else:
         return data
+
+
+
+def normalizeBrand(keyword):
+    final_word = ''
+    keywordArr = keyword.split(' ')
+    for key in keywordArr:
+        final_word += stringcase.sentencecase(key).replace(' ','') + ' '
+
+    return final_word
+
+

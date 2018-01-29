@@ -1,10 +1,6 @@
 # -*- coding: utf-8 -*-
 import sys
-from threading import Lock
-from wsgiref import headers
 
-import bs4
-from celery import shared_task
 
 from SouqScrapperApp.ShopifyAPI import ShopifyIntegration
 import requests
@@ -116,8 +112,6 @@ class SouqUAEScrapper():
         totalPage = self.get_total_page(soup_page=soap_page)
         if totalPage > 5:
             totalPage = 5
-        # TODO just for testing
-        totalPage = 1
         self.parse_products_list(soup_page=soap_page, tags=tags)
         for page in range(2, totalPage, 1):
             page_html = self.open_http_connection(call_url=url, page=page)

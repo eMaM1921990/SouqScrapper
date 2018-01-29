@@ -7,6 +7,8 @@ from SouqScrapperApp.SouqUAE import SouqUAEScrapper
 from SouqScrapperApp.models import Product
 import json
 
+from SouqScrapperApp.ounass_scrapper import OunassScrapper
+
 
 def ServiceTemporarilyDownError(object):
     raise Exception('This is not handled!')
@@ -22,6 +24,21 @@ def scrap(url, collection, subCollection, tags, isFashion):
             subCollection=subCollection,
             tags=tags,
             isFashion=isFashion
+
+        )
+    except ServiceTemporarilyDownError:
+        print 'error'
+        raise scrap.retry()
+
+
+
+@shared_task(max_retries=10)
+def scrap_ounaas(url, tags):
+    ounass_scrapper = OunassScrapper()
+    try:
+        ounass_scrapper.startScrappingProcessing(
+            url=url,
+            tags=tags
 
         )
     except ServiceTemporarilyDownError:
