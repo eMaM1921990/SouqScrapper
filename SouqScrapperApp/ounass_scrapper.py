@@ -24,10 +24,11 @@ class OunassScrapper():
         }
         self.product_url = 'https://www.ounass.ae{}'
         self.product_image_url = 'https:{}'
+        self.affiliate_url = 'https://tayer.ae/?a=362&c=326&p=r&s1=&ckmrdr={}'
 
     def startScrappingProcessing(self, url, tags):
         print('[Ounass] start Scrapping Processing -- {} '.format(url))
-        page_html = self.open_http_connection(call_url=url, page=1)
+        page_html = self.open_http_connection(call_url=url, page=0)
         if page_html:
             self.retrieve_result(page_html=page_html, url=url, tags=tags)
 
@@ -252,7 +253,6 @@ class OunassScrapper():
             record.save()
             return record
         except Exception as e:
-
             print('Error during save proudct {}  cause {} '.format(product['title'], str(e)))
             return None
 
@@ -312,7 +312,7 @@ class OunassScrapper():
                 "metafields": [
                     {
                         "key": "url",
-                        "value": product['url'],
+                        "value": self.affiliate_url.format(product['url']),
                         "value_type": "string",
                         "namespace": "global"
                     },

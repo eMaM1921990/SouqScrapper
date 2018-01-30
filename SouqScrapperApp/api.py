@@ -57,7 +57,7 @@ def fetch_ounass_scrapper(request):
         scrap_ounaas.delay(url=store.url, tags=store.tags)
 
     # ounass_scrapper = OunassScrapper()
-    # ounass_scrapper.startScrappingProcessing(url='https://www.ounass.ae/clothing/beachwear/',tags='UAE, Ounaas, Womens, Womens Clothing, Womens Beachwear')
+    # ounass_scrapper.startScrappingProcessing(url='https://www.ounass.ae/jewellery/fine-jewellery/rings/',tags='UAE, Ounaas, Womens, Womens Jewellery, Fine Jewellery, Womens Rings ')
     resp['status'] = True
     resp['desc'] = "Shopify will be update once this process done"
     return Response(resp)
