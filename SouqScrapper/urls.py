@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/scrapSouq/$',api.fetchScrapper, name='fetchScrapper'),
     url(r'^api/v1/scrap_ounass/$',api.fetch_ounass_scrapper, name='fetch_ounass_scrapper'),
+    url(r'^api/v1/scrap_nass/$',api.fetch_nass_scrapper, name='fetch_nass_scrapper'),
 
 
     url(r'^api/v1/scrapSouqMissed/(?P<id>.*)/$',api.fetchScrapperMissed, name='fetchScrapperMissed'),

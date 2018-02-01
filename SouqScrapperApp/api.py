@@ -61,3 +61,22 @@ def fetch_ounass_scrapper(request):
     resp['status'] = True
     resp['desc'] = "Shopify will be update once this process done"
     return Response(resp)
+
+
+
+
+
+@never_cache
+@api_view(['GET'])
+def fetch_nass_scrapper(request):
+    resp = {}
+    resp['status'] = False
+    # querySet = Stores.objects.filter(store='Naas')
+    # for store in querySet:
+    #     scrap_naas.delay(url=store.url, tags=store.tags)
+
+    nass_scrapper = NassScrapper()
+    nass_scrapper.startScrappingProcessing(url='https://www.nass.com/women/clothing/dresses/?color=Black&length=Maxi',tags='UAE, Oman, Saudi Arabia, Kuwait,  Naas, Womens, Womens Clothing, Dresses, Black, Maxi ')
+    resp['status'] = True
+    resp['desc'] = "Shopify will be update once this process done"
+    return Response(resp)

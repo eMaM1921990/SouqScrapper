@@ -7,6 +7,7 @@ from SouqScrapperApp.SouqUAE import SouqUAEScrapper
 from SouqScrapperApp.models import Product
 import json
 
+from SouqScrapperApp.naas_scrapper import NassScrapper
 from SouqScrapperApp.ounass_scrapper import OunassScrapper
 
 
@@ -41,6 +42,23 @@ def scrap_ounaas(url, tags):
             tags=tags
 
         )
+        return 'Done'
+    except ServiceTemporarilyDownError:
+        print 'error'
+        raise scrap.retry()
+
+
+
+@shared_task(max_retries=10)
+def scrap_naas(url, tags):
+    nass_scrapper = NassScrapper()
+    try:
+        nass_scrapper.startScrappingProcessing(
+            url=url,
+            tags=tags
+
+        )
+        return 'Done'
     except ServiceTemporarilyDownError:
         print 'error'
         raise scrap.retry()

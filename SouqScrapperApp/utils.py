@@ -39,6 +39,7 @@ def getPriceTags(price):
 def formatPrice(value):
     if type(value) == str:
         value = value.replace("AED", "")
+        value = value.replace("Was", "")
         value = value.replace(",", '')
         value = value.replace(' ', '')
     value = float(value) * 0.272245
