@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from tasks import *
 from models import *
 from ounass_scrapper import *
+from gap_scrapper import *
 import time
 
 __author__ = 'eMaM'
@@ -71,12 +72,29 @@ def fetch_ounass_scrapper(request):
 def fetch_nass_scrapper(request):
     resp = {}
     resp['status'] = False
-    # querySet = Stores.objects.filter(store='Naas')
-    # for store in querySet:
-    #     scrap_naas.delay(url=store.url, tags=store.tags)
+    querySet = Stores.objects.filter(store='naas')
+    for store in querySet:
+        scrap_naas.delay(url=store.url, tags=store.tags)
 
-    nass_scrapper = NassScrapper()
-    nass_scrapper.startScrappingProcessing(url='https://www.nass.com/women/clothing/dresses/?color=Black&length=Maxi',tags='UAE, Oman, Saudi Arabia, Kuwait,  Naas, Womens, Womens Clothing, Dresses, Black, Maxi ')
+    # nass_scrapper = NassScrapper()
+    # nass_scrapper.startScrappingProcessing(url='https://www.nass.com/women/clothing/dresses/?color=Black&length=Maxi',tags='UAE, Oman, Saudi Arabia, Kuwait,  Naas, Womens, Womens Clothing, Dresses, Black, Maxi ')
+    resp['status'] = True
+    resp['desc'] = "Shopify will be update once this process done"
+    return Response(resp)
+
+
+
+@never_cache
+@api_view(['GET'])
+def fetch_gap_scrapper(request):
+    resp = {}
+    resp['status'] = False
+    querySet = Stores.objects.filter(store='gap')
+    for store in querySet:
+        scrap_gap.delay(url=store.url, tags=store.tags)
+
+    # gap_scrapper = GapScrapper()
+    # gap_scrapper.startScrappingProcessing(url='https://www.gap.ae/women/jeans',tags='UAE, GAP, Womens, Womens Clothing, Womens Jeans ')
     resp['status'] = True
     resp['desc'] = "Shopify will be update once this process done"
     return Response(resp)

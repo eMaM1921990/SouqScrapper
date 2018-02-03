@@ -4,6 +4,7 @@ from celery import shared_task
 
 from SouqScrapperApp.ShopifyAPI import ShopifyIntegration
 from SouqScrapperApp.SouqUAE import SouqUAEScrapper
+from SouqScrapperApp.gap_scrapper import GapScrapper
 from SouqScrapperApp.models import Product
 import json
 
@@ -62,6 +63,22 @@ def scrap_naas(url, tags):
     except ServiceTemporarilyDownError:
         print 'error'
         raise scrap.retry()
+
+
+@shared_task(max_retries=10)
+def scrap_gap(url, tags):
+    gap_scrapper = GapScrapper()
+    try:
+        gap_scrapper.startScrappingProcessing(
+            url=url,
+            tags=tags
+
+        )
+        return 'Done'
+    except ServiceTemporarilyDownError:
+        print 'error'
+        raise scrap.retry()
+
 
 
 # @shared_task(max_retries=10)
