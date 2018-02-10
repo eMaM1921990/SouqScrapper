@@ -67,8 +67,8 @@ class NassScrapper():
     def retrieve_result(self, page_html, url, tags):
         soap_page = self.parsePageSoap(page=page_html)
         totalPage = self.get_total_page(soup_page=soap_page)
-        if totalPage > 8:
-            totalPage = 8
+        # if totalPage > 8:
+        #     totalPage = 8
 
         self.parse_products(soup_page=soap_page, tags=tags, base_url=url)
 

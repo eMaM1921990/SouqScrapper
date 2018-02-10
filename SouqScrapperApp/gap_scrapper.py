@@ -26,12 +26,12 @@ class GapScrapper():
         self.affiliate_url = 'https://tayer.ae/?a=362&c=326&p=r&s1=&ckmrdr={}'
 
     def startScrappingProcessing(self, url, tags):
-        print('[Naas] start Scrapping Processing -- {} '.format(url))
+        print('[GAP] start Scrapping Processing -- {} '.format(url))
         page_html = self.open_http_connection(call_url=url, page=0)
         if page_html:
             self.retrieve_result(page_html=page_html, url=url, tags=tags)
 
-        print('[Naas]  end Scrapping Processing -- {} '.format(url))
+        print('[GAP]  end Scrapping Processing -- {} '.format(url))
 
     # Open Http connection
     def open_http_connection(self, call_url, page, headers=None):
