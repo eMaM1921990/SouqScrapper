@@ -39,7 +39,7 @@ class GapScrapper():
             # print('Begin: Call URL -- {} '.format(call_url))
             time.sleep(self.time_wait)
             scraped_html_page = requests.get(call_url, timeout=self.time_out,
-                                             params=dict(P=page), headers=headers)
+                                             params=dict(p=page), headers=headers)
             # print('Finish: Call URL -- {} '.format(call_url))
             # Check response code
             if scraped_html_page.status_code == 200:
@@ -65,12 +65,12 @@ class GapScrapper():
     def retrieve_result(self, page_html, url, tags):
         soap_page = self.parsePageSoap(page=page_html)
         totalPage = self.get_total_page(soup_page=soap_page)
-        if totalPage > 8:
-            totalPage = 8
+        # if totalPage > 8:
+        #     totalPage = 8
 
         self.parse_products(soup_page=soap_page, tags=tags)
 
-        for page in range(2, totalPage, 1):
+        for page in range(1, totalPage, 1):
             page_html = self.open_http_connection(call_url=url, page=page)
             soap_page = self.parsePageSoap(page=page_html)
             self.parse_products(soup_page=soap_page, tags=tags)
